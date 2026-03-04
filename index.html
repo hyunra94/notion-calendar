@@ -124,9 +124,7 @@ const CONFIG={
   PROPS:{title:'제목',date:'날짜',category:'카테고리',duration:'소요시간'},
   CATEGORIES:[
     {id:'업무',emoji:'💼',color:'neon'},
-    {id:'공휴일',emoji:'🎌',color:'electric'},
     {id:'개인',emoji:'🌟',color:'cyan'},
-    {id:'기타',emoji:'📌',color:'steel'},
   ],
 };
 const COLORS={
@@ -161,9 +159,9 @@ function fmt(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0
 function todayStr(){return fmt(new Date())}
 function getMonthDays(y,m){const sd=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),prev=new Date(y,m,0).getDate();const days=[];for(let i=sd-1;i>=0;i--)days.push({date:new Date(y,m-1,prev-i),cur:false});for(let i=1;i<=dim;i++)days.push({date:new Date(y,m,i),cur:true});while(days.length<42){const n=days.length-sd-dim+1;days.push({date:new Date(y,m+1,n),cur:false})}return days}
 function getWeekDays(d){const s=new Date(d);s.setDate(d.getDate()-d.getDay());return Array.from({length:7},(_,i)=>{const w=new Date(s);w.setDate(s.getDate()+i);return w})}
-function eventsOn(ds){let evs=state.events.filter(e=>e.date===ds);if(state.filterCat){if(state.filterCat==='업무'){const exc=['공휴일','개인','기타'];evs=evs.filter(e=>!exc.includes(e.category))}else{evs=evs.filter(e=>e.category===state.filterCat)}}return evs}
+function eventsOn(ds){let evs=state.events.filter(e=>e.date===ds);if(state.filterCat){if(state.filterCat==='업무'){evs=evs.filter(e=>e.category!=='개인')}else if(state.filterCat==='개인'){evs=evs.filter(e=>e.category==='개인'||e.category==='공휴일')}}return evs}
 function catInfo(n){return CONFIG.CATEGORIES.find(c=>c.id===n)||{emoji:'📌',color:'steel'}}
-function catColor(n){const c=CONFIG.CATEGORIES.find(cat=>cat.id===n);if(c)return COLORS[c.color]||COLORS.steel;const exc=['공휴일','개인','기타'];if(!exc.includes(n))return COLORS['neon'];return COLORS.steel}
+function catColor(n){const c=CONFIG.CATEGORIES.find(cat=>cat.id===n);if(c)return COLORS[c.color]||COLORS.steel;if(n==='공휴일')return COLORS['electric'];return COLORS['neon']}
 function fetchRange(){const d=state.currentDate;if(state.view==='month'){const y=d.getFullYear(),m=d.getMonth();fetchEvents(fmt(new Date(y,m-1,20)),fmt(new Date(y,m+1,10)))}else{const wk=getWeekDays(d);fetchEvents(fmt(wk[0]),fmt(wk[6]))}}
 
 function render(){
