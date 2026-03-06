@@ -46,7 +46,7 @@
   .day-header.sun{color:#FF6B6B} .day-header.sat{color:#74B9FF}
 
   .month-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-  .month-cell{min-height:70px;padding:3px;cursor:pointer;transition:background .12s;border-right:1px solid var(--grid-line);border-bottom:1px solid var(--grid-line)}
+  .month-cell{min-height:70px;padding:3px;cursor:pointer;transition:background .12s;border-right:1px solid var(--grid-line);border-bottom:1px solid var(--grid-line);position:relative;overflow:visible}
   .month-cell:nth-child(7n){border-right:none}
   .month-cell:hover{background:var(--hover)}
   .month-cell.other{opacity:.2}
@@ -56,9 +56,15 @@
   .date-num.today{background:linear-gradient(135deg,var(--accent),#1a6dd4);color:#fff;font-weight:800;box-shadow:0 0 10px var(--accent-glow);animation:pulse 2.5s infinite}
   .date-num.sun{color:#FF6B6B} .date-num.sat{color:#74B9FF}
 
-  /* 일정 pill - 줄바꿈 허용 */
   .ev-pill{border-radius:4px;padding:2px 4px;margin-bottom:2px;font-size:10px;font-weight:600;border-left:2px solid;cursor:pointer;display:block;text-decoration:none;line-height:1.3;word-break:break-all;overflow-wrap:break-word;white-space:normal}
   .ev-more{font-size:9px;color:var(--text-dim);font-weight:600;padding-left:3px;margin-top:1px}
+
+  /* 기간 바 스타일 */
+  .ev-bar{border-radius:3px;padding:1px 4px;margin-bottom:1px;font-size:9px;font-weight:700;cursor:pointer;display:block;text-decoration:none;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;z-index:1}
+  .ev-bar.bar-start{border-radius:3px 0 0 3px;margin-right:-3px}
+  .ev-bar.bar-mid{border-radius:0;margin-left:-3px;margin-right:-3px}
+  .ev-bar.bar-end{border-radius:0 3px 3px 0;margin-left:-3px}
+  .ev-bar.bar-single{border-radius:3px}
 
   .week-date-row{display:grid;grid-template-columns:36px repeat(7,1fr);border-bottom:1px solid var(--card-border)}
   .week-date-cell{text-align:center;padding:4px 1px}
@@ -105,7 +111,6 @@
   .spinner{width:28px;height:28px;border:3px solid var(--card-border);border-top:3px solid var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
   .error-msg{padding:12px;background:rgba(255,107,107,0.08);color:#FF6B6B;border:1px solid rgba(255,107,107,0.2);border-radius:8px;font-size:12px;text-align:center;margin:12px 0}
 
-  /* ── Desktop ── */
   @media(min-width:641px){
     body{padding:20px}
     .logo{width:36px;height:36px;font-size:17px}
@@ -120,6 +125,7 @@
     .month-cell{min-height:90px;padding:5px}
     .date-num{width:26px;height:26px;font-size:12px}
     .ev-pill{font-size:11px;padding:2px 6px;border-left-width:3px}
+    .ev-bar{font-size:10px;padding:2px 6px}
     .ev-more{font-size:10px}
     .detail-panel{padding:16px;margin-top:12px}
     .detail-name{font-size:13px}
@@ -162,7 +168,6 @@ const COLORS={
   steel:{bg:'#576574',light:'rgba(87,101,116,0.12)',text:'#8395A7'},
   mint:{bg:'#55EFC4',light:'rgba(85,239,196,0.08)',text:'#55EFC4'},
 };
-// 월요일 시작: 월화수목금토일
 const DAYS=['월','화','수','목','금','토','일'];
 const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 const HOURS=Array.from({length:16},(_,i)=>i+6);
@@ -176,44 +181,60 @@ async function fetchEvents(start,end){
       body:JSON.stringify({database_id:CONFIG.DATABASE_ID,filter:{and:[{property:CONFIG.PROPS.date,date:{on_or_after:start}},{property:CONFIG.PROPS.date,date:{on_or_before:end}}]},sorts:[{property:CONFIG.PROPS.date,direction:'ascending'}],page_size:100})});
     if(!res.ok)throw new Error(`API 오류 (${res.status})`);
     const data=await res.json();
-    state.events=(data.results||[]).map(p=>{const pr=p.properties;const dv=pr[CONFIG.PROPS.date]?.date?.start||'';const[d,t]=dv.includes('T')?dv.split('T'):[dv,''];
-      return{id:p.id,url:p.url||`https://notion.so/${p.id.replace(/-/g,'')}`,title:pr[CONFIG.PROPS.title]?.title?.[0]?.plain_text||'(제목 없음)',date:d,time:t?t.slice(0,5):'',category:pr[CONFIG.PROPS.category]?.select?.name||'',duration:pr[CONFIG.PROPS.duration]?.number||30};});
+    state.events=(data.results||[]).map(p=>{
+      const pr=p.properties;
+      const dateObj=pr[CONFIG.PROPS.date]?.date;
+      const startVal=dateObj?.start||'';
+      const endVal=dateObj?.end||'';
+      const[d,t]=startVal.includes('T')?startVal.split('T'):[startVal,''];
+      const endDate=endVal?endVal.split('T')[0]:'';
+      return{
+        id:p.id,
+        url:p.url||`https://notion.so/${p.id.replace(/-/g,'')}`,
+        title:pr[CONFIG.PROPS.title]?.title?.[0]?.plain_text||'(제목 없음)',
+        date:d,
+        endDate:endDate,
+        time:t?t.slice(0,5):'',
+        category:pr[CONFIG.PROPS.category]?.select?.name||'',
+        duration:pr[CONFIG.PROPS.duration]?.number||30,
+        isMultiDay:!!(endDate&&endDate!==d),
+      };
+    });
     state.loading=false;render();
   }catch(e){state.loading=false;state.error=e.message;render();}
 }
 
 function fmt(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function todayStr(){return fmt(new Date())}
+function dateDiff(a,b){return Math.round((new Date(b)-new Date(a))/(86400000))}
 
-// 월요일 시작 달력
 function getMonthDays(y,m){
   const dim=new Date(y,m+1,0).getDate();
   const prev=new Date(y,m,0).getDate();
-  let firstDay=new Date(y,m,1).getDay(); // 0=일
-  // 월요일 시작으로 변환: 일(0)→6, 월(1)→0, 화(2)→1, ...
-  firstDay = firstDay===0 ? 6 : firstDay-1;
+  let firstDay=new Date(y,m,1).getDay();
+  firstDay=firstDay===0?6:firstDay-1;
   const days=[];
-  for(let i=firstDay-1;i>=0;i--) days.push({date:new Date(y,m-1,prev-i),cur:false});
-  for(let i=1;i<=dim;i++) days.push({date:new Date(y,m,i),cur:true});
+  for(let i=firstDay-1;i>=0;i--)days.push({date:new Date(y,m-1,prev-i),cur:false});
+  for(let i=1;i<=dim;i++)days.push({date:new Date(y,m,i),cur:true});
   while(days.length<42){const n=days.length-firstDay-dim+1;days.push({date:new Date(y,m+1,n),cur:false})}
   return days;
 }
 
-// 월요일 시작 주간
 function getWeekDays(d){
-  const s=new Date(d);
-  let day=s.getDay();
-  // 월요일 시작: 일(0)→-6, 월(1)→0
-  const diff = day===0 ? -6 : 1-day;
+  const s=new Date(d);let day=s.getDay();
+  const diff=day===0?-6:1-day;
   s.setDate(s.getDate()+diff);
   return Array.from({length:7},(_,i)=>{const w=new Date(s);w.setDate(s.getDate()+i);return w});
 }
 
-// 요일 인덱스 (월=0, 화=1, ... 일=6)
-function getDowMon(d){ const dow=d.getDay(); return dow===0?6:dow-1; }
+function getDowMon(d){const dow=d.getDay();return dow===0?6:dow-1;}
 
+// 특정 날짜에 해당하는 이벤트 (기간 일정 포함)
 function eventsOn(ds){
-  let evs=state.events.filter(e=>e.date===ds);
+  let evs=state.events.filter(e=>{
+    if(e.isMultiDay){return ds>=e.date&&ds<=e.endDate;}
+    return e.date===ds;
+  });
   if(state.filterCat){
     if(state.filterCat==='업무'){evs=evs.filter(e=>e.category!=='개인')}
     else if(state.filterCat==='개인'){evs=evs.filter(e=>e.category==='개인'||e.category==='공휴일')}
@@ -278,7 +299,6 @@ function renderCalendar(){
 function renderMonth(){
   const d=state.currentDate,days=getMonthDays(d.getFullYear(),d.getMonth()),td=todayStr();
   let h=`<div class="cal-card"><div class="day-headers month">`;
-  // 월화수목금토일 (토=5, 일=6)
   for(let i=0;i<7;i++){
     const cls=i===6?'sun':i===5?'sat':'';
     h+=`<div class="day-header ${cls}">${DAYS[i]}</div>`;
@@ -286,11 +306,43 @@ function renderMonth(){
   h+=`</div><div class="month-grid">`;
   for(const day of days){
     const ds=fmt(day.date),isToday=ds===td,dow=getDowMon(day.date),evs=eventsOn(ds);
-    // dow: 0=월...5=토,6=일
-    const isSun=dow===6, isSat=dow===5;
+    const isSun=dow===6,isSat=dow===5;
     h+=`<div class="month-cell ${day.cur?'':'other'} ${isToday?'today-cell':''}" data-date="${ds}"><div class="date-num ${isToday?'today':''} ${!isToday&&isSun?'sun':''} ${!isToday&&isSat?'sat':''}">${day.date.getDate()}</div>`;
-    for(let i=0;i<Math.min(evs.length,2);i++){const ev=evs[i],c=catColor(ev.category);h+=`<a class="ev-pill" href="${ev.url}" target="_blank" rel="noopener" style="background:${c.light};border-left-color:${c.bg};color:${c.text}" title="${ev.title} ${ev.time?'('+ev.time+')':''}">${ev.title}</a>`}
-    if(evs.length>2)h+=`<div class="ev-more">+${evs.length-2}개</div>`;h+=`</div>`}
+
+    // 기간 일정과 단일 일정 분리
+    const multiEvs=evs.filter(e=>e.isMultiDay);
+    const singleEvs=evs.filter(e=>!e.isMultiDay);
+    let shown=0;
+    const maxShow=2;
+
+    // 기간 일정 바 표시
+    for(const ev of multiEvs){
+      if(shown>=maxShow)break;
+      const c=catColor(ev.category);
+      const isStart=ds===ev.date;
+      const isEnd=ds===ev.endDate;
+      let barCls='bar-mid';
+      if(isStart&&isEnd)barCls='bar-single';
+      else if(isStart)barCls='bar-start';
+      else if(isEnd)barCls='bar-end';
+      // 시작일에만 제목 표시, 나머지는 색 바만
+      const label=isStart?ev.title:(dow===0?ev.title:'');
+      h+=`<a class="ev-bar ${barCls}" href="${ev.url}" target="_blank" rel="noopener" style="background:${c.bg}88;color:#fff;" title="${ev.title} (${ev.date}~${ev.endDate})">${label||'&nbsp;'}</a>`;
+      shown++;
+    }
+
+    // 단일 일정 pill 표시
+    for(const ev of singleEvs){
+      if(shown>=maxShow)break;
+      const c=catColor(ev.category);
+      h+=`<a class="ev-pill" href="${ev.url}" target="_blank" rel="noopener" style="background:${c.light};border-left-color:${c.bg};color:${c.text}" title="${ev.title} ${ev.time?'('+ev.time+')':''}">${ev.title}</a>`;
+      shown++;
+    }
+
+    const totalEvs=multiEvs.length+singleEvs.length;
+    if(totalEvs>maxShow)h+=`<div class="ev-more">+${totalEvs-maxShow}개</div>`;
+    h+=`</div>`;
+  }
   return h+`</div></div>`}
 
 function renderWeek(){
@@ -307,8 +359,14 @@ function renderWeek(){
   h+=`</div><div class="events-area">`;
   for(const hr of HOURS)h+=`<div class="hour-line"><div class="hour-half"></div></div>`;
   for(let i=1;i<7;i++)h+=`<div class="day-divider" style="left:${i*(100/7)}%"></div>`;
-  for(let di=0;di<7;di++){const ds=fmt(wk[di]),evs=eventsOn(ds);for(const ev of evs){if(!ev.time)continue;const[ehh,emm]=ev.time.split(':').map(Number);const top=((ehh-6)*60+emm)*(hh/60),height=Math.max((ev.duration||30)*(hh/60),isMobile?18:24);const c=catColor(ev.category);
-    h+=`<a class="week-block" href="${ev.url}" target="_blank" rel="noopener" style="top:${top}px;left:calc(${di*(100/7)}% + 1px);width:calc(${100/7}% - 2px);height:${height}px;background:linear-gradient(135deg,${c.bg}cc,${c.bg}66);box-shadow:0 2px 8px ${c.bg}33"><div class="week-block-time">${ev.time}</div><div>${ev.title}</div></a>`}}
+  for(let di=0;di<7;di++){const ds=fmt(wk[di]),evs=eventsOn(ds);for(const ev of evs){if(!ev.time&&!ev.isMultiDay)continue;
+    if(ev.isMultiDay&&!ev.time){
+      // 기간 일정 - 주간뷰 상단에 종일 바로 표시
+      continue; // 주간뷰에서 기간일정은 시간 없으면 스킵 (월간뷰에서 확인)
+    }
+    const[ehh,emm]=(ev.time||'09:00').split(':').map(Number);
+    const top=((ehh-6)*60+emm)*(hh/60),height=Math.max((ev.duration||30)*(hh/60),isMobile?18:24);const c=catColor(ev.category);
+    h+=`<a class="week-block" href="${ev.url}" target="_blank" rel="noopener" style="top:${top}px;left:calc(${di*(100/7)}% + 1px);width:calc(${100/7}% - 2px);height:${height}px;background:linear-gradient(135deg,${c.bg}cc,${c.bg}66);box-shadow:0 2px 8px ${c.bg}33"><div class="week-block-time">${ev.time||'종일'}</div><div>${ev.title}</div></a>`}}
   const now=new Date(),tidx=wk.findIndex(w=>fmt(w)===td);
   if(tidx>=0&&now.getHours()>=6&&now.getHours()<22){const top=((now.getHours()-6)*60+now.getMinutes())*(hh/60);h+=`<div class="now-line" style="top:${top}px;background:var(--accent);box-shadow:0 0 10px rgba(45,127,249,0.6)"><div class="now-dot" style="left:calc(${tidx*(100/7)}%);background:var(--accent);box-shadow:0 0 6px var(--accent)"></div></div>`}
   return h+`</div></div></div></div>`}
@@ -318,14 +376,15 @@ function renderDetail(){
   const[y,m,dd]=state.selectedDate.split('-').map(Number);
   let h=`<div class="detail-panel"><div class="detail-title"><span>${m}월 ${dd}일 일정</span><div class="detail-count">${evs.length}개</div></div>`;
   for(const ev of evs){const c=catColor(ev.category),ci=catInfo(ev.category);
-    h+=`<a class="detail-item" href="${ev.url}" target="_blank" rel="noopener" style="background:${c.light};border:1px solid ${c.bg}22"><div class="detail-icon" style="background:linear-gradient(135deg,${c.bg}cc,${c.bg}66);box-shadow:0 2px 8px ${c.bg}33">${ci.emoji}</div><div class="detail-info"><div class="detail-name" style="color:${c.text}">${ev.title}</div><div class="detail-meta">${ev.time||'종일'} · ${ev.category||'기타'}</div></div><div class="detail-arrow">→</div></a>`}
+    const dateInfo=ev.isMultiDay?`${ev.date} ~ ${ev.endDate}`:(ev.time||'종일');
+    h+=`<a class="detail-item" href="${ev.url}" target="_blank" rel="noopener" style="background:${c.light};border:1px solid ${c.bg}22"><div class="detail-icon" style="background:linear-gradient(135deg,${c.bg}cc,${c.bg}66);box-shadow:0 2px 8px ${c.bg}33">${ci.emoji}</div><div class="detail-info"><div class="detail-name" style="color:${c.text}">${ev.title}</div><div class="detail-meta">${dateInfo} · ${ev.category||'기타'}</div></div><div class="detail-arrow">→</div></a>`}
   return h+`</div>`}
 
 function bindEvents(){
   document.querySelectorAll('.view-btn').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;state.selectedDate=null;render();fetchRange()}));
   document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.nav;if(v==='today')state.currentDate=new Date();else{const dir=parseInt(v),d=new Date(state.currentDate);if(state.view==='month')d.setMonth(d.getMonth()+dir);else d.setDate(d.getDate()+dir*7);state.currentDate=d}state.selectedDate=null;render();fetchRange()}));
   document.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>{const c=b.dataset.cat;state.filterCat=c===state.filterCat||c===''?null:c;state.selectedDate=null;render()}));
-  document.querySelectorAll('.month-cell').forEach(cell=>cell.addEventListener('click',(e)=>{if(e.target.closest('.ev-pill'))return;const ds=cell.dataset.date;state.selectedDate=state.selectedDate===ds?null:ds;render()}))}
+  document.querySelectorAll('.month-cell').forEach(cell=>cell.addEventListener('click',(e)=>{if(e.target.closest('.ev-pill')||e.target.closest('.ev-bar'))return;const ds=cell.dataset.date;state.selectedDate=state.selectedDate===ds?null:ds;render()}))}
 
 render();
 if(state.configured)fetchRange();
