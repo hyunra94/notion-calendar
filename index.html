@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Notion Calendar</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
@@ -200,8 +200,9 @@ async function createEvent(title,date,type,endDate,people){
       props[CONFIG.PROPS.category]={select:{name:'일정'}};
       props[CONFIG.PROPS.project]={relation:[{id:CONFIG.PROJECT_IDS['일정']}]};
     }
-    const res=await fetch(CONFIG.WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'create',database_id:CONFIG.DATABASE_ID,properties:props})});
+    const createUrl=CONFIG.WORKER_URL.replace(/\/$/,'')+'/create';
+    const res=await fetch(createUrl,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({database_id:CONFIG.DATABASE_ID,properties:props})});
     const result=await res.json();
     if(!res.ok||result.object==='error')throw new Error(result.message||'추가 실패');
     state.addMsg='✅ 추가 완료!';state.showAddForm=false;render();
