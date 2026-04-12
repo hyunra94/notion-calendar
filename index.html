@@ -328,7 +328,7 @@ function renderAddForm(){
     <div class="add-form-title">🌸 ${state.selectedDate} 일정 추가</div>
     <label>제목</label><input type="text" id="add-title" placeholder="일정 이름">
     <label>유형</label><select id="add-type"><option value="개인">🌸 개인</option><option value="업무">💼 업무</option></select>
-    <div id="people-row"><label>만나는 사람 (쉼표로 구분)</label><input type="text" id="add-people" placeholder="예: 홍길동, 김철수"></div>
+    <div id="people-row"><label>만나는 사람 (쉼표로 구분)</label><input type="text" id="add-people" placeholder="예: 사람 이름"></div>
     <label>종료일 (선택)</label><input type="date" id="add-end">
     <div class="add-form-btns"><button class="add-submit" id="btn-add-submit">🌸 추가!</button><button class="add-cancel" id="btn-add-cancel">취소</button></div>
     ${state.addMsg?`<div class="add-msg" style="color:${state.addMsg.startsWith('❌')?'#C62828':'var(--accent)'}">${state.addMsg}</div>`:''}
