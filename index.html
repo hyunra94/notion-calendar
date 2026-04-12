@@ -43,8 +43,7 @@
 
   .month-table{width:100%;border-collapse:collapse;table-layout:fixed}
   .month-table th{padding:4px 0;text-align:center;font-size:9px;font-weight:700;font-family:'DotGothic16',monospace;color:var(--text-dim);border-bottom:2px solid #F8BBD0;background:#FFF5F7}
-  .month-table th.sun{color:#E53935}
-  .month-table th.sat{color:#1976D2}
+  .month-table th.sun{color:#E53935}.month-table th.sat{color:#1976D2}
   .month-table td{padding:1px;vertical-align:top;border-right:1px solid var(--grid-line);border-bottom:1px solid var(--grid-line);height:48px;cursor:pointer;overflow:hidden}
   .month-table td:last-child{border-right:none}
   .month-table td:hover{background:var(--hover)}
@@ -89,16 +88,16 @@
   .detail-meta{font-size:8px;color:var(--text-dim);margin-top:1px;font-family:'DotGothic16',monospace}
   .detail-arrow{color:var(--text-muted);font-size:10px;flex-shrink:0;font-family:'DotGothic16',monospace}
 
-  /* ── 추가 버튼 ── */
   .add-btn{border:2px solid #F06292;background:#FCE4EC;color:#E91E63;font-size:10px;font-weight:800;font-family:'DotGothic16',monospace;padding:2px 6px;cursor:pointer;box-shadow:1px 1px 0 #F48FB1}
   .add-btn:active{box-shadow:none;transform:translate(1px,1px)}
 
-  /* ── 추가 폼 ── */
   .add-form{margin-top:4px;padding:8px;background:var(--surface);border:2px solid #F48FB1;animation:fadeIn .2s ease}
   .add-form-title{font-size:10px;font-weight:800;font-family:'DotGothic16',monospace;color:var(--accent);margin-bottom:5px}
   .add-form label{display:block;font-size:8px;font-weight:700;color:var(--text-dim);margin-bottom:2px;font-family:'DotGothic16',monospace}
   .add-form input,.add-form select{width:100%;padding:5px 6px;border:2px solid #F8BBD0;background:var(--card);color:var(--text);font-size:10px;font-family:'Gowun Dodum',sans-serif;outline:none;margin-bottom:6px}
   .add-form input:focus,.add-form select:focus{border-color:#E91E63}
+  .add-form-row{display:flex;gap:4px}
+  .add-form-row>*{flex:1}
   .add-form-btns{display:flex;gap:4px;margin-top:2px}
   .add-submit{flex:1;padding:6px;border:2px solid #C2185B;background:#F06292;color:#fff;font-weight:800;font-size:10px;cursor:pointer;font-family:'DotGothic16',monospace;box-shadow:1px 1px 0 #E91E63}
   .add-submit:active{box-shadow:none;transform:translate(1px,1px)}
@@ -126,29 +125,14 @@
   .error-msg{padding:8px;background:#FFEBEE;color:#C62828;border:2px solid #EF9A9A;font-size:10px;text-align:center;margin:8px 2px;font-family:'DotGothic16',monospace}
 
   @media(min-width:641px){
-    body{padding:16px}
-    .app{max-width:960px;margin:0 auto}
-    .header{margin-bottom:10px;padding:0}
-    .logo{width:32px;height:32px;font-size:16px}
-    .header-title{font-size:18px}
-    .header-sub{font-size:10px}
-    .view-btn{padding:4px 10px;font-size:12px}
-    .nav-btn{width:28px;height:28px;font-size:14px}
-    .today-btn{height:28px;padding:0 8px;font-size:9px}
-    .filters{gap:4px;margin-bottom:8px;padding:0}
-    .filter-btn{padding:3px 10px;font-size:10px}
-    .month-table th,.week-table th{font-size:12px;padding:6px 0}
-    .month-table td{height:80px;padding:3px}
-    .date-num{font-size:13px}
-    .ev-pill,.week-ev-pill{font-size:10px;padding:1px 4px;border-left-width:3px}
-    .ev-bar{font-size:10px;padding:1px 4px}
-    .ev-more{font-size:9px}
-    .detail-panel{padding:12px;margin-top:8px}
-    .detail-name{font-size:12px}
-    .detail-meta{font-size:9px}
-    .detail-icon{width:28px;height:28px;font-size:13px}
-    .week-date-num{width:28px;height:28px;font-size:14px}
-    .week-events{max-height:400px}
+    body{padding:16px}.app{max-width:960px;margin:0 auto}
+    .header{margin-bottom:10px;padding:0}.logo{width:32px;height:32px;font-size:16px}.header-title{font-size:18px}.header-sub{font-size:10px}
+    .view-btn{padding:4px 10px;font-size:12px}.nav-btn{width:28px;height:28px;font-size:14px}.today-btn{height:28px;padding:0 8px;font-size:9px}
+    .filters{gap:4px;margin-bottom:8px;padding:0}.filter-btn{padding:3px 10px;font-size:10px}
+    .month-table th,.week-table th{font-size:12px;padding:6px 0}.month-table td{height:80px;padding:3px}.date-num{font-size:13px}
+    .ev-pill,.week-ev-pill{font-size:10px;padding:1px 4px;border-left-width:3px}.ev-bar{font-size:10px;padding:1px 4px}.ev-more{font-size:9px}
+    .detail-panel{padding:12px;margin-top:8px}.detail-name{font-size:12px}.detail-meta{font-size:9px}.detail-icon{width:28px;height:28px;font-size:13px}
+    .week-date-num{width:28px;height:28px;font-size:14px}.week-events{max-height:400px}
     .add-form input,.add-form select{font-size:12px;padding:6px 8px}
   }
 
@@ -163,14 +147,17 @@
 const CONFIG={
   WORKER_URL:'https://lingering-art-15ef-notion-proxy.abyss9405.workers.dev',
   DATABASE_ID:'1ff6b59b151a8173b350ea75f155aa8d',
-  PROPS:{title:'제목',date:'날짜',category:'카테고리',duration:'소요시간'},
+  PROPS:{title:'제목',date:'날짜',category:'카테고리',duration:'소요시간',project:'프로젝트',personalMemo:'개인 메모'},
+  // 관계형 페이지 ID
+  PROJECT_IDS:{
+    '개인':'2026b59b151a8062b13fe1bdf955e54c',
+    '일정':'28f6b59b151a8033a20cddb3581de335',
+  },
   CATEGORIES:[{id:'업무',emoji:'💼',color:'rose'},{id:'개인',emoji:'🌸',color:'peach'}],
 };
 const COLORS={
   rose:{bg:'#F06292',light:'#FCE4EC',text:'#C2185B'},
   peach:{bg:'#FFAB91',light:'#FBE9E7',text:'#D84315'},
-  berry:{bg:'#CE93D8',light:'#F3E5F5',text:'#7B1FA2'},
-  sky:{bg:'#81D4FA',light:'#E1F5FE',text:'#0277BD'},
   coral:{bg:'#EF5350',light:'#FFEBEE',text:'#C62828'},
   steel:{bg:'#B0BEC5',light:'#ECEFF1',text:'#546E7A'},
 };
@@ -184,8 +171,9 @@ async function fetchEvents(start,end){
   try{
     const res=await fetch(CONFIG.WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({database_id:CONFIG.DATABASE_ID,filter:{and:[{property:CONFIG.PROPS.date,date:{on_or_after:start}},{property:CONFIG.PROPS.date,date:{on_or_before:end}}]},sorts:[{property:CONFIG.PROPS.date,direction:'ascending'}],page_size:100})});
-    if(!res.ok)throw new Error(`API 오류 (${res.status})`);
+    if(!res.ok){const err=await res.text();throw new Error(`API ${res.status}: ${err.slice(0,100)}`);}
     const data=await res.json();
+    if(data.object==='error')throw new Error(data.message||'Notion API 오류');
     state.events=(data.results||[]).map(p=>{
       const pr=p.properties,dateObj=pr[CONFIG.PROPS.date]?.date;
       const startVal=dateObj?.start||'',endVal=dateObj?.end||'';
@@ -197,20 +185,42 @@ async function fetchEvents(start,end){
   }catch(e){state.loading=false;state.error=e.message;render();}
 }
 
-async function createEvent(title,date,category,endDate){
+async function createEvent(title,date,type,endDate,people){
   state.addMsg='추가 중... 🌸';render();
   try{
-    const dateVal=endDate?{start:date,end:endDate}:{start:date};
     const props={};
+    // 제목
     props[CONFIG.PROPS.title]={title:[{text:{content:title}}]};
+    // 날짜
+    const dateVal=endDate?{start:date,end:endDate}:{start:date};
     props[CONFIG.PROPS.date]={date:dateVal};
-    if(category)props[CONFIG.PROPS.category]={select:{name:category}};
+
+    if(type==='개인'){
+      // 카테고리 → 개인
+      props[CONFIG.PROPS.category]={select:{name:'개인'}};
+      // 프로젝트(관계형) → 개인 페이지
+      props[CONFIG.PROPS.project]={relation:[{id:CONFIG.PROJECT_IDS['개인']}]};
+      // 개인 메모(다중선택) → 인물 이름들
+      if(people&&people.trim()){
+        const names=people.split(',').map(n=>n.trim()).filter(n=>n);
+        props[CONFIG.PROPS.personalMemo]={multi_select:names.map(n=>({name:n}))};
+      }
+    } else {
+      // 업무: 카테고리 → 일정
+      props[CONFIG.PROPS.category]={select:{name:'일정'}};
+      // 프로젝트(관계형) → 일정 페이지
+      props[CONFIG.PROPS.project]={relation:[{id:CONFIG.PROJECT_IDS['일정']}]};
+    }
+
     const res=await fetch(CONFIG.WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({action:'create',database_id:CONFIG.DATABASE_ID,properties:props})});
-    if(!res.ok)throw new Error(`추가 실패 (${res.status})`);
+
+    const result=await res.json();
+    if(!res.ok||result.object==='error')throw new Error(result.message||`추가 실패 (${res.status})`);
+
     state.addMsg='✅ 추가 완료!';state.showAddForm=false;
     render();
-    setTimeout(()=>{state.addMsg='';fetchRange();},1000);
+    setTimeout(()=>{state.addMsg='';fetchRange();},1200);
   }catch(e){state.addMsg='❌ '+e.message;render();}
 }
 
@@ -225,11 +235,7 @@ function getMonthDays(y,m){
   while(days.length<42){const n=days.length-fd-dim+1;days.push({date:new Date(y,m+1,n),cur:false})}
   return days;
 }
-function getWeekDays(d){
-  const s=new Date(d);let day=s.getDay();
-  s.setDate(s.getDate()+(day===0?-6:1-day));
-  return Array.from({length:7},(_,i)=>{const w=new Date(s);w.setDate(s.getDate()+i);return w});
-}
+function getWeekDays(d){const s=new Date(d);let day=s.getDay();s.setDate(s.getDate()+(day===0?-6:1-day));return Array.from({length:7},(_,i)=>{const w=new Date(s);w.setDate(s.getDate()+i);return w})}
 function getDowMon(d){const dow=d.getDay();return dow===0?6:dow-1;}
 function eventsOn(ds){
   let evs=state.events.filter(e=>e.isMultiDay?(ds>=e.date&&ds<=e.endDate):e.date===ds);
@@ -257,21 +263,16 @@ function render(){
 
 function renderSetup(){
   return`<div class="setup-overlay"><div class="setup-box">
-    <div class="setup-logo">🌸</div>
-    <div class="setup-title">Notion Calendar</div>
+    <div class="setup-logo">🌸</div><div class="setup-title">Notion Calendar</div>
     <div class="setup-desc">노션 DB와 연결하여 일정을 확인하세요</div>
-    <div class="setup-label">🔗 Worker URL</div>
-    <input class="setup-input" id="inp-worker" value="${CONFIG.WORKER_URL}">
-    <div class="setup-label">🗄️ Database ID</div>
-    <input class="setup-input" id="inp-dbid" value="${CONFIG.DATABASE_ID}">
+    <div class="setup-label">🔗 Worker URL</div><input class="setup-input" id="inp-worker" value="${CONFIG.WORKER_URL}">
+    <div class="setup-label">🗄️ Database ID</div><input class="setup-input" id="inp-dbid" value="${CONFIG.DATABASE_ID}">
     <button class="setup-btn" id="btn-connect">🌸 START!</button>
-    <div class="setup-hint">
-      <div style="font-weight:700;margin-bottom:3px;color:var(--text)">📋 GUIDE</div>
+    <div class="setup-hint"><div style="font-weight:700;margin-bottom:3px;color:var(--text)">📋 GUIDE</div>
       <div class="setup-step"><div class="setup-step-num">1</div><div>노션 DB에 <code>제목</code> <code>날짜</code> <code>카테고리</code></div></div>
       <div class="setup-step"><div class="setup-step-num">2</div><div><a href="https://www.notion.so/my-integrations" target="_blank" style="color:var(--accent)">notion.so/my-integrations</a></div></div>
       <div class="setup-step"><div class="setup-step-num">3</div><div>Cloudflare Worker + <code>worker.js</code></div></div>
-      <div class="setup-step"><div class="setup-step-num">4</div><div>입력 후 START!</div></div>
-    </div>
+      <div class="setup-step"><div class="setup-step-num">4</div><div>입력 후 START!</div></div></div>
   </div></div>`}
 function bindSetup(){const b=document.getElementById('btn-connect'),w=document.getElementById('inp-worker'),d=document.getElementById('inp-dbid');if(!b)return;b.addEventListener('click',()=>{CONFIG.WORKER_URL=w.value.trim();CONFIG.DATABASE_ID=d.value.trim();if(CONFIG.WORKER_URL&&CONFIG.DATABASE_ID){state.configured=true;render();fetchRange()}})}
 
@@ -294,15 +295,13 @@ function renderCalendar(){
 
 function renderEvBar(ev,ds,dow){
   const col=catColor(ev.category),isStart=ds===ev.date,isEnd=ds===ev.endDate;
-  let barCls='bar-mid';
-  if(isStart&&isEnd)barCls='bar-single';else if(isStart)barCls='bar-start';else if(isEnd)barCls='bar-end';
+  let barCls='bar-mid';if(isStart&&isEnd)barCls='bar-single';else if(isStart)barCls='bar-start';else if(isEnd)barCls='bar-end';
   const label=isStart?ev.title:(dow===0?ev.title:'');
-  const borderColor=col.bg,bgColor=col.bg+'33';
-  let s;
-  if(barCls==='bar-start')s=`background:${bgColor};border-left-color:${borderColor};color:${col.text}`;
-  else if(barCls==='bar-end')s=`background:${bgColor};border-right-color:${borderColor};color:${col.text}`;
-  else if(barCls==='bar-single')s=`background:${bgColor};border-left-color:${borderColor};color:${col.text}`;
-  else s=`background:${bgColor};color:${col.text}`;
+  const bc=col.bg,bg=col.bg+'33';
+  let s;if(barCls==='bar-start')s=`background:${bg};border-left-color:${bc};color:${col.text}`;
+  else if(barCls==='bar-end')s=`background:${bg};border-right-color:${bc};color:${col.text}`;
+  else if(barCls==='bar-single')s=`background:${bg};border-left-color:${bc};color:${col.text}`;
+  else s=`background:${bg};color:${col.text}`;
   return`<a class="ev-bar ${barCls}" href="${ev.url}" target="_blank" style="${s}" title="${ev.title}">${label||'&nbsp;'}</a>`;
 }
 
@@ -311,20 +310,18 @@ function renderMonth(){
   let h=`<div class="cal-card"><table class="month-table"><thead><tr>`;
   for(let i=0;i<7;i++){const cls=i===6?'sun':i===5?'sat':'';h+=`<th class="${cls}">${DAYS[i]}</th>`}
   h+=`</tr></thead><tbody>`;
-  for(let r=0;r<6;r++){h+=`<tr>`;
-    for(let c=0;c<7;c++){
-      const idx=r*7+c,day=days[idx],ds=fmt(day.date),isToday=ds===td,dow=getDowMon(day.date);
-      const isSun=dow===6,isSat=dow===5,evs=eventsOn(ds);
-      h+=`<td class="${day.cur?'':'other'} ${isToday?'today-cell':''}" data-date="${ds}">`;
-      if(isToday)h+=`<div style="text-align:center"><span class="date-num today">${day.date.getDate()}</span></div>`;
-      else h+=`<div class="date-num ${isSun?'sun':''} ${isSat?'sat':''}">${day.date.getDate()}</div>`;
-      const multiEvs=evs.filter(e=>e.isMultiDay),singleEvs=evs.filter(e=>!e.isMultiDay);
-      let shown=0;const maxShow=3;
-      for(const ev of multiEvs){if(shown>=maxShow)break;h+=renderEvBar(ev,ds,dow);shown++;}
-      for(const ev of singleEvs){if(shown>=maxShow)break;const col=catColor(ev.category);h+=`<a class="ev-pill" href="${ev.url}" target="_blank" style="background:${col.light};border-left-color:${col.bg};color:${col.text}" title="${ev.title}">${ev.title}</a>`;shown++;}
-      if(multiEvs.length+singleEvs.length>maxShow)h+=`<div class="ev-more">+${multiEvs.length+singleEvs.length-maxShow}</div>`;
-      h+=`</td>`;
-    }h+=`</tr>`;}
+  for(let r=0;r<6;r++){h+=`<tr>`;for(let c=0;c<7;c++){
+    const idx=r*7+c,day=days[idx],ds=fmt(day.date),isToday=ds===td,dow=getDowMon(day.date);
+    const isSun=dow===6,isSat=dow===5,evs=eventsOn(ds);
+    h+=`<td class="${day.cur?'':'other'} ${isToday?'today-cell':''}" data-date="${ds}">`;
+    if(isToday)h+=`<div style="text-align:center"><span class="date-num today">${day.date.getDate()}</span></div>`;
+    else h+=`<div class="date-num ${isSun?'sun':''} ${isSat?'sat':''}">${day.date.getDate()}</div>`;
+    const me=evs.filter(e=>e.isMultiDay),se=evs.filter(e=>!e.isMultiDay);
+    let shown=0;const mx=3;
+    for(const ev of me){if(shown>=mx)break;h+=renderEvBar(ev,ds,dow);shown++;}
+    for(const ev of se){if(shown>=mx)break;const col=catColor(ev.category);h+=`<a class="ev-pill" href="${ev.url}" target="_blank" style="background:${col.light};border-left-color:${col.bg};color:${col.text}" title="${ev.title}">${ev.title}</a>`;shown++;}
+    if(me.length+se.length>mx)h+=`<div class="ev-more">+${me.length+se.length-mx}</div>`;
+    h+=`</td>`;}h+=`</tr>`;}
   return h+`</tbody></table></div>`}
 
 function renderWeek(){
@@ -336,9 +333,8 @@ function renderWeek(){
   h+=`</tr><tr>`;
   for(const wd of wk){const ds=fmt(wd),isToday=ds===td,dow=getDowMon(wd),evs=eventsOn(ds);
     h+=`<td class="${isToday?'today-cell':''}" data-date="${ds}" style="vertical-align:top;padding:2px 1px"><div class="week-events">`;
-    const multiEvs=evs.filter(e=>e.isMultiDay),singleEvs=evs.filter(e=>!e.isMultiDay);
-    for(const ev of multiEvs)h+=renderEvBar(ev,ds,dow);
-    for(const ev of singleEvs){const col=catColor(ev.category);h+=`<a class="week-ev-pill" href="${ev.url}" target="_blank" style="background:${col.light};border-left-color:${col.bg};color:${col.text}" title="${ev.title}">${ev.title}</a>`}
+    for(const ev of evs.filter(e=>e.isMultiDay))h+=renderEvBar(ev,ds,dow);
+    for(const ev of evs.filter(e=>!e.isMultiDay)){const col=catColor(ev.category);h+=`<a class="week-ev-pill" href="${ev.url}" target="_blank" style="background:${col.light};border-left-color:${col.bg};color:${col.text}" title="${ev.title}">${ev.title}</a>`}
     if(!evs.length)h+=`<div style="height:20px"></div>`;
     h+=`</div></td>`}
   h+=`</tr></tbody></table></div>`;return h}
@@ -356,13 +352,19 @@ function renderDetail(){
 function renderAddForm(){
   if(state.addMsg&&!state.showAddForm)return`<div class="add-msg" style="color:var(--accent)">${state.addMsg}</div>`;
   if(!state.showAddForm||!state.selectedDate)return'';
-  const cats=CONFIG.CATEGORIES.map(c=>`<option value="${c.id}">${c.emoji}${c.id}</option>`).join('');
   return`<div class="add-form">
     <div class="add-form-title">🌸 ${state.selectedDate} 일정 추가</div>
     <label>제목</label>
     <input type="text" id="add-title" placeholder="일정 이름">
-    <label>카테고리</label>
-    <select id="add-cat">${cats}</select>
+    <label>유형</label>
+    <select id="add-type">
+      <option value="개인">🌸 개인</option>
+      <option value="업무">💼 업무</option>
+    </select>
+    <div id="people-row">
+      <label>만나는 사람 (쉼표로 구분)</label>
+      <input type="text" id="add-people" placeholder="예: 홍길동, 김철수">
+    </div>
     <label>종료일 (선택)</label>
     <input type="date" id="add-end" value="">
     <div class="add-form-btns">
@@ -377,17 +379,24 @@ function bindEvents(){
   document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.nav;if(v==='today')state.currentDate=new Date();else{const dir=parseInt(v),d=new Date(state.currentDate);if(state.view==='month')d.setMonth(d.getMonth()+dir);else d.setDate(d.getDate()+dir*7);state.currentDate=d}state.selectedDate=null;state.showAddForm=false;state.addMsg='';render();fetchRange()}));
   document.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>{const c=b.dataset.cat;state.filterCat=c===state.filterCat||c===''?null:c;state.selectedDate=null;state.showAddForm=false;render()}));
   document.querySelectorAll('td[data-date]').forEach(td=>td.addEventListener('click',(e)=>{if(e.target.closest('.ev-pill')||e.target.closest('.ev-bar')||e.target.closest('.week-ev-pill'))return;const ds=td.dataset.date;state.selectedDate=state.selectedDate===ds?null:ds;state.showAddForm=false;state.addMsg='';render()}));
-  // 추가 버튼
+
   document.getElementById('btn-add')?.addEventListener('click',()=>{state.showAddForm=true;state.addMsg='';render();});
-  // 추가 제출
-  document.getElementById('btn-add-submit')?.addEventListener('click',()=>{
-    const title=document.getElementById('add-title').value.trim();
-    const cat=document.getElementById('add-cat').value;
-    const endDate=document.getElementById('add-end').value;
-    if(!title){state.addMsg='❌ 제목을 입력하세요';render();return;}
-    createEvent(title,state.selectedDate,cat,endDate||null);
+
+  // 유형 변경 시 만나는 사람 필드 표시/숨김
+  document.getElementById('add-type')?.addEventListener('change',(e)=>{
+    const row=document.getElementById('people-row');
+    if(row)row.style.display=e.target.value==='개인'?'block':'none';
   });
-  // 취소
+
+  document.getElementById('btn-add-submit')?.addEventListener('click',()=>{
+    const title=document.getElementById('add-title')?.value.trim();
+    const type=document.getElementById('add-type')?.value;
+    const endDate=document.getElementById('add-end')?.value;
+    const people=document.getElementById('add-people')?.value||'';
+    if(!title){state.addMsg='❌ 제목을 입력하세요';render();return;}
+    createEvent(title,state.selectedDate,type,endDate||null,people);
+  });
+
   document.getElementById('btn-add-cancel')?.addEventListener('click',()=>{state.showAddForm=false;state.addMsg='';render();});
 }
 
