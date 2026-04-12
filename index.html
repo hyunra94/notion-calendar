@@ -41,16 +41,11 @@
 
   .cal-card{background:var(--card);border:2px solid #F48FB1;overflow:hidden;width:100%;box-shadow:3px 3px 0 #F8BBD0}
 
-  /* ── Month Table ── */
   .month-table{width:100%;border-collapse:collapse;table-layout:fixed}
   .month-table th{padding:4px 0;text-align:center;font-size:9px;font-weight:700;font-family:'DotGothic16',monospace;color:var(--text-dim);border-bottom:2px solid #F8BBD0;background:#FFF5F7}
   .month-table th.sun{color:#E53935}
   .month-table th.sat{color:#1976D2}
-  .month-table td{
-    padding:1px;vertical-align:top;
-    border-right:1px solid var(--grid-line);border-bottom:1px solid var(--grid-line);
-    height:48px;cursor:pointer;overflow:hidden;
-  }
+  .month-table td{padding:1px;vertical-align:top;border-right:1px solid var(--grid-line);border-bottom:1px solid var(--grid-line);height:48px;cursor:pointer;overflow:hidden}
   .month-table td:last-child{border-right:none}
   .month-table td:hover{background:var(--hover)}
   .month-table td.other{opacity:.2}
@@ -63,24 +58,16 @@
   .ev-pill{padding:1px 2px;margin-bottom:1px;font-size:8px;font-weight:600;border-left:2px solid;cursor:pointer;display:block;text-decoration:none;line-height:1.3;word-break:break-all;white-space:normal;font-family:'Gowun Dodum',sans-serif}
   .ev-more{font-size:7px;color:var(--text-dim);font-weight:600;text-align:center;font-family:'DotGothic16',monospace}
 
-  /* ── Multi-day Bar ── */
   .ev-bar{padding:1px 2px;margin-bottom:1px;font-size:8px;font-weight:700;cursor:pointer;display:block;text-decoration:none;line-height:1.3;word-break:break-all;white-space:normal;font-family:'Gowun Dodum',sans-serif;min-height:14px}
   .ev-bar.bar-start{border-left:3px solid;margin-right:-1px;padding-right:0}
   .ev-bar.bar-mid{border-left:none;margin-left:-1px;margin-right:-1px;padding-left:2px;padding-right:0}
   .ev-bar.bar-end{border-left:none;border-right:3px solid;margin-left:-1px;padding-left:2px}
   .ev-bar.bar-single{border-left:3px solid}
 
-  /* ── Week Table (시간 없는 칸 형태) ── */
   .week-table{width:100%;border-collapse:collapse;table-layout:fixed}
   .week-table th{padding:4px 0;text-align:center;font-size:9px;font-weight:700;font-family:'DotGothic16',monospace;color:var(--text-dim);border-bottom:2px solid #F8BBD0;background:#FFF5F7}
-  .week-table th.sun{color:#E53935}
-  .week-table th.sat{color:#1976D2}
-  .week-table td{
-    padding:1px;vertical-align:top;
-    border-right:1px solid var(--grid-line);
-    cursor:pointer;overflow:hidden;
-    min-height:60px;
-  }
+  .week-table th.sun{color:#E53935}.week-table th.sat{color:#1976D2}
+  .week-table td{padding:1px;vertical-align:top;border-right:1px solid var(--grid-line);cursor:pointer;overflow:hidden;min-height:60px}
   .week-table td:last-child{border-right:none}
   .week-table td:hover{background:var(--hover)}
   .week-table td.today-cell{background:#FCE4EC}
@@ -90,9 +77,9 @@
   .week-events{max-height:280px;overflow-y:auto}
   .week-ev-pill{padding:1px 2px;margin-bottom:1px;font-size:8px;font-weight:600;border-left:2px solid;cursor:pointer;display:block;text-decoration:none;line-height:1.3;word-break:break-all;white-space:normal;font-family:'Gowun Dodum',sans-serif}
 
-  /* ── Detail Panel ── */
   .detail-panel{margin-top:4px;background:var(--card);padding:8px;border:2px solid #F48FB1;box-shadow:2px 2px 0 #F8BBD0;animation:fadeIn .2s ease}
-  .detail-title{font-size:11px;font-weight:800;font-family:'DotGothic16',monospace;margin-bottom:5px;display:flex;align-items:center;gap:4px;color:var(--accent)}
+  .detail-title{font-size:11px;font-weight:800;font-family:'DotGothic16',monospace;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;color:var(--accent)}
+  .detail-title-left{display:flex;align-items:center;gap:4px}
   .detail-count{background:#F06292;color:#fff;padding:0 5px;font-size:8px;border:1px solid #C2185B}
   .detail-item{display:flex;align-items:center;gap:5px;padding:5px 6px;margin-bottom:3px;cursor:pointer;text-decoration:none;color:inherit;border:1px solid var(--grid-line);background:var(--surface)}
   .detail-item:hover{background:var(--hover)}
@@ -102,7 +89,23 @@
   .detail-meta{font-size:8px;color:var(--text-dim);margin-top:1px;font-family:'DotGothic16',monospace}
   .detail-arrow{color:var(--text-muted);font-size:10px;flex-shrink:0;font-family:'DotGothic16',monospace}
 
-  /* ── Setup ── */
+  /* ── 추가 버튼 ── */
+  .add-btn{border:2px solid #F06292;background:#FCE4EC;color:#E91E63;font-size:10px;font-weight:800;font-family:'DotGothic16',monospace;padding:2px 6px;cursor:pointer;box-shadow:1px 1px 0 #F48FB1}
+  .add-btn:active{box-shadow:none;transform:translate(1px,1px)}
+
+  /* ── 추가 폼 ── */
+  .add-form{margin-top:4px;padding:8px;background:var(--surface);border:2px solid #F48FB1;animation:fadeIn .2s ease}
+  .add-form-title{font-size:10px;font-weight:800;font-family:'DotGothic16',monospace;color:var(--accent);margin-bottom:5px}
+  .add-form label{display:block;font-size:8px;font-weight:700;color:var(--text-dim);margin-bottom:2px;font-family:'DotGothic16',monospace}
+  .add-form input,.add-form select{width:100%;padding:5px 6px;border:2px solid #F8BBD0;background:var(--card);color:var(--text);font-size:10px;font-family:'Gowun Dodum',sans-serif;outline:none;margin-bottom:6px}
+  .add-form input:focus,.add-form select:focus{border-color:#E91E63}
+  .add-form-btns{display:flex;gap:4px;margin-top:2px}
+  .add-submit{flex:1;padding:6px;border:2px solid #C2185B;background:#F06292;color:#fff;font-weight:800;font-size:10px;cursor:pointer;font-family:'DotGothic16',monospace;box-shadow:1px 1px 0 #E91E63}
+  .add-submit:active{box-shadow:none;transform:translate(1px,1px)}
+  .add-cancel{flex:1;padding:6px;border:2px solid #F8BBD0;background:#FCE4EC;color:var(--text-dim);font-weight:800;font-size:10px;cursor:pointer;font-family:'DotGothic16',monospace;box-shadow:1px 1px 0 #F8BBD0}
+  .add-cancel:active{box-shadow:none;transform:translate(1px,1px)}
+  .add-msg{font-size:9px;font-family:'DotGothic16',monospace;text-align:center;padding:4px;margin-top:4px}
+
   .setup-overlay{display:flex;align-items:center;justify-content:center;min-height:80vh}
   .setup-box{background:var(--card);border:3px solid #F48FB1;padding:16px 12px;width:100%;max-width:360px;box-shadow:4px 4px 0 #F8BBD0}
   .setup-logo{width:40px;height:40px;border:3px solid #F06292;background:#FCE4EC;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 8px;box-shadow:2px 2px 0 #F48FB1}
@@ -146,6 +149,7 @@
     .detail-icon{width:28px;height:28px;font-size:13px}
     .week-date-num{width:28px;height:28px;font-size:14px}
     .week-events{max-height:400px}
+    .add-form input,.add-form select{font-size:12px;padding:6px 8px}
   }
 
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.7}}
@@ -173,7 +177,7 @@ const COLORS={
 const DAYS=['월','화','수','목','금','토','일'];
 const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
-let state={view:'month',currentDate:new Date(),events:[],selectedDate:null,filterCat:null,loading:false,error:null,configured:!!(CONFIG.WORKER_URL&&CONFIG.DATABASE_ID)};
+let state={view:'month',currentDate:new Date(),events:[],selectedDate:null,filterCat:null,loading:false,error:null,configured:!!(CONFIG.WORKER_URL&&CONFIG.DATABASE_ID),showAddForm:false,addMsg:''};
 
 async function fetchEvents(start,end){
   state.loading=true;state.error=null;render();
@@ -191,6 +195,23 @@ async function fetchEvents(start,end){
     });
     state.loading=false;render();
   }catch(e){state.loading=false;state.error=e.message;render();}
+}
+
+async function createEvent(title,date,category,endDate){
+  state.addMsg='추가 중... 🌸';render();
+  try{
+    const dateVal=endDate?{start:date,end:endDate}:{start:date};
+    const props={};
+    props[CONFIG.PROPS.title]={title:[{text:{content:title}}]};
+    props[CONFIG.PROPS.date]={date:dateVal};
+    if(category)props[CONFIG.PROPS.category]={select:{name:category}};
+    const res=await fetch(CONFIG.WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'create',database_id:CONFIG.DATABASE_ID,properties:props})});
+    if(!res.ok)throw new Error(`추가 실패 (${res.status})`);
+    state.addMsg='✅ 추가 완료!';state.showAddForm=false;
+    render();
+    setTimeout(()=>{state.addMsg='';fetchRange();},1000);
+  }catch(e){state.addMsg='❌ '+e.message;render();}
 }
 
 function fmt(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -230,7 +251,7 @@ function fetchRange(){const d=state.currentDate;if(state.view==='month'){const y
 function render(){
   const app=document.getElementById('app');
   if(!state.configured){app.innerHTML=renderSetup();bindSetup();return}
-  app.innerHTML=renderHeader()+renderFilters()+renderCalendar()+renderDetail();
+  app.innerHTML=renderHeader()+renderFilters()+renderCalendar()+renderDetail()+renderAddForm();
   bindEvents();
 }
 
@@ -276,14 +297,13 @@ function renderEvBar(ev,ds,dow){
   let barCls='bar-mid';
   if(isStart&&isEnd)barCls='bar-single';else if(isStart)barCls='bar-start';else if(isEnd)barCls='bar-end';
   const label=isStart?ev.title:(dow===0?ev.title:'');
-  const borderColor=col.bg;
-  const bgColor=col.bg+'33';
-  let barStyle;
-  if(barCls==='bar-start')barStyle=`background:${bgColor};border-left-color:${borderColor};color:${col.text}`;
-  else if(barCls==='bar-end')barStyle=`background:${bgColor};border-right-color:${borderColor};color:${col.text}`;
-  else if(barCls==='bar-single')barStyle=`background:${bgColor};border-left-color:${borderColor};color:${col.text}`;
-  else barStyle=`background:${bgColor};color:${col.text}`;
-  return`<a class="ev-bar ${barCls}" href="${ev.url}" target="_blank" style="${barStyle}" title="${ev.title}">${label||'&nbsp;'}</a>`;
+  const borderColor=col.bg,bgColor=col.bg+'33';
+  let s;
+  if(barCls==='bar-start')s=`background:${bgColor};border-left-color:${borderColor};color:${col.text}`;
+  else if(barCls==='bar-end')s=`background:${bgColor};border-right-color:${borderColor};color:${col.text}`;
+  else if(barCls==='bar-single')s=`background:${bgColor};border-left-color:${borderColor};color:${col.text}`;
+  else s=`background:${bgColor};color:${col.text}`;
+  return`<a class="ev-bar ${barCls}" href="${ev.url}" target="_blank" style="${s}" title="${ev.title}">${label||'&nbsp;'}</a>`;
 }
 
 function renderMonth(){
@@ -291,29 +311,20 @@ function renderMonth(){
   let h=`<div class="cal-card"><table class="month-table"><thead><tr>`;
   for(let i=0;i<7;i++){const cls=i===6?'sun':i===5?'sat':'';h+=`<th class="${cls}">${DAYS[i]}</th>`}
   h+=`</tr></thead><tbody>`;
-  for(let r=0;r<6;r++){
-    h+=`<tr>`;
+  for(let r=0;r<6;r++){h+=`<tr>`;
     for(let c=0;c<7;c++){
-      const idx=r*7+c,day=days[idx];
-      const ds=fmt(day.date),isToday=ds===td,dow=getDowMon(day.date);
+      const idx=r*7+c,day=days[idx],ds=fmt(day.date),isToday=ds===td,dow=getDowMon(day.date);
       const isSun=dow===6,isSat=dow===5,evs=eventsOn(ds);
       h+=`<td class="${day.cur?'':'other'} ${isToday?'today-cell':''}" data-date="${ds}">`;
       if(isToday)h+=`<div style="text-align:center"><span class="date-num today">${day.date.getDate()}</span></div>`;
       else h+=`<div class="date-num ${isSun?'sun':''} ${isSat?'sat':''}">${day.date.getDate()}</div>`;
       const multiEvs=evs.filter(e=>e.isMultiDay),singleEvs=evs.filter(e=>!e.isMultiDay);
-      let shown=0;const maxShow=2;
+      let shown=0;const maxShow=3;
       for(const ev of multiEvs){if(shown>=maxShow)break;h+=renderEvBar(ev,ds,dow);shown++;}
-      for(const ev of singleEvs){
-        if(shown>=maxShow)break;
-        const col=catColor(ev.category);
-        h+=`<a class="ev-pill" href="${ev.url}" target="_blank" style="background:${col.light};border-left-color:${col.bg};color:${col.text}" title="${ev.title}">${ev.title}</a>`;
-        shown++;
-      }
+      for(const ev of singleEvs){if(shown>=maxShow)break;const col=catColor(ev.category);h+=`<a class="ev-pill" href="${ev.url}" target="_blank" style="background:${col.light};border-left-color:${col.bg};color:${col.text}" title="${ev.title}">${ev.title}</a>`;shown++;}
       if(multiEvs.length+singleEvs.length>maxShow)h+=`<div class="ev-more">+${multiEvs.length+singleEvs.length-maxShow}</div>`;
       h+=`</td>`;
-    }
-    h+=`</tr>`;
-  }
+    }h+=`</tr>`;}
   return h+`</tbody></table></div>`}
 
 function renderWeek(){
@@ -321,47 +332,64 @@ function renderWeek(){
   let h=`<div class="cal-card"><table class="week-table"><thead><tr>`;
   for(let i=0;i<7;i++){const cls=i===6?'sun':i===5?'sat':'';h+=`<th class="${cls}">${DAYS[i]}</th>`}
   h+=`</tr></thead><tbody><tr>`;
-  // 날짜 행
-  for(const wd of wk){
-    const ds=fmt(wd),isToday=ds===td;
-    h+=`<td class="${isToday?'today-cell':''}" data-date="${ds}" style="border-bottom:2px solid #F8BBD0">`;
-    h+=`<div class="week-date-header"><span class="week-date-num ${isToday?'today':''}">${wd.getDate()}</span></div>`;
-    h+=`</td>`;
-  }
+  for(const wd of wk){const ds=fmt(wd),isToday=ds===td;h+=`<td class="${isToday?'today-cell':''}" data-date="${ds}" style="border-bottom:2px solid #F8BBD0"><div class="week-date-header"><span class="week-date-num ${isToday?'today':''}">${wd.getDate()}</span></div></td>`}
   h+=`</tr><tr>`;
-  // 일정 행 - 제한 없이 전부 표시
-  for(const wd of wk){
-    const ds=fmt(wd),isToday=ds===td,dow=getDowMon(wd);
-    const evs=eventsOn(ds);
-    h+=`<td class="${isToday?'today-cell':''}" data-date="${ds}" style="vertical-align:top;padding:2px 1px">`;
-    h+=`<div class="week-events">`;
+  for(const wd of wk){const ds=fmt(wd),isToday=ds===td,dow=getDowMon(wd),evs=eventsOn(ds);
+    h+=`<td class="${isToday?'today-cell':''}" data-date="${ds}" style="vertical-align:top;padding:2px 1px"><div class="week-events">`;
     const multiEvs=evs.filter(e=>e.isMultiDay),singleEvs=evs.filter(e=>!e.isMultiDay);
-    for(const ev of multiEvs){h+=renderEvBar(ev,ds,dow);}
-    for(const ev of singleEvs){
-      const col=catColor(ev.category);
-      h+=`<a class="week-ev-pill" href="${ev.url}" target="_blank" style="background:${col.light};border-left-color:${col.bg};color:${col.text}" title="${ev.title}">${ev.title}</a>`;
-    }
+    for(const ev of multiEvs)h+=renderEvBar(ev,ds,dow);
+    for(const ev of singleEvs){const col=catColor(ev.category);h+=`<a class="week-ev-pill" href="${ev.url}" target="_blank" style="background:${col.light};border-left-color:${col.bg};color:${col.text}" title="${ev.title}">${ev.title}</a>`}
     if(!evs.length)h+=`<div style="height:20px"></div>`;
-    h+=`</div></td>`;
-  }
-  h+=`</tr></tbody></table></div>`;
-  return h;
-}
+    h+=`</div></td>`}
+  h+=`</tr></tbody></table></div>`;return h}
 
 function renderDetail(){
-  if(!state.selectedDate)return'';const evs=eventsOn(state.selectedDate);if(!evs.length)return'';
+  if(!state.selectedDate)return'';const evs=eventsOn(state.selectedDate);
   const[y,m,dd]=state.selectedDate.split('-').map(Number);
-  let h=`<div class="detail-panel"><div class="detail-title">🌸 ${m}/${dd} <div class="detail-count">${evs.length}</div></div>`;
+  let h=`<div class="detail-panel"><div class="detail-title"><div class="detail-title-left">🌸 ${m}/${dd} <div class="detail-count">${evs.length}</div></div><button class="add-btn" id="btn-add">＋추가</button></div>`;
   for(const ev of evs){const col=catColor(ev.category),ci=catInfo(ev.category);
     const info=ev.isMultiDay?`${ev.date}~${ev.endDate}`:(ev.time||'종일');
     h+=`<a class="detail-item" href="${ev.url}" target="_blank" style="border-color:${col.bg}33"><div class="detail-icon" style="background:${col.light};border-color:${col.bg}">${ci.emoji}</div><div class="detail-info"><div class="detail-name" style="color:${col.text}">${ev.title}</div><div class="detail-meta">${info} · ${ev.category||'기타'}</div></div><div class="detail-arrow">▶</div></a>`}
+  if(!evs.length)h+=`<div style="font-size:9px;color:var(--text-dim);text-align:center;padding:8px;font-family:'DotGothic16',monospace">일정이 없어요</div>`;
   return h+`</div>`}
 
+function renderAddForm(){
+  if(state.addMsg&&!state.showAddForm)return`<div class="add-msg" style="color:var(--accent)">${state.addMsg}</div>`;
+  if(!state.showAddForm||!state.selectedDate)return'';
+  const cats=CONFIG.CATEGORIES.map(c=>`<option value="${c.id}">${c.emoji}${c.id}</option>`).join('');
+  return`<div class="add-form">
+    <div class="add-form-title">🌸 ${state.selectedDate} 일정 추가</div>
+    <label>제목</label>
+    <input type="text" id="add-title" placeholder="일정 이름">
+    <label>카테고리</label>
+    <select id="add-cat">${cats}</select>
+    <label>종료일 (선택)</label>
+    <input type="date" id="add-end" value="">
+    <div class="add-form-btns">
+      <button class="add-submit" id="btn-add-submit">🌸 추가!</button>
+      <button class="add-cancel" id="btn-add-cancel">취소</button>
+    </div>
+    ${state.addMsg?`<div class="add-msg" style="color:${state.addMsg.startsWith('❌')?'#C62828':'var(--accent)'}">${state.addMsg}</div>`:''}
+  </div>`}
+
 function bindEvents(){
-  document.querySelectorAll('.view-btn').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;state.selectedDate=null;render();fetchRange()}));
-  document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.nav;if(v==='today')state.currentDate=new Date();else{const dir=parseInt(v),d=new Date(state.currentDate);if(state.view==='month')d.setMonth(d.getMonth()+dir);else d.setDate(d.getDate()+dir*7);state.currentDate=d}state.selectedDate=null;render();fetchRange()}));
-  document.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>{const c=b.dataset.cat;state.filterCat=c===state.filterCat||c===''?null:c;state.selectedDate=null;render()}));
-  document.querySelectorAll('td[data-date]').forEach(td=>td.addEventListener('click',(e)=>{if(e.target.closest('.ev-pill')||e.target.closest('.ev-bar')||e.target.closest('.week-ev-pill'))return;const ds=td.dataset.date;state.selectedDate=state.selectedDate===ds?null:ds;render()}))}
+  document.querySelectorAll('.view-btn').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;state.selectedDate=null;state.showAddForm=false;state.addMsg='';render();fetchRange()}));
+  document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.nav;if(v==='today')state.currentDate=new Date();else{const dir=parseInt(v),d=new Date(state.currentDate);if(state.view==='month')d.setMonth(d.getMonth()+dir);else d.setDate(d.getDate()+dir*7);state.currentDate=d}state.selectedDate=null;state.showAddForm=false;state.addMsg='';render();fetchRange()}));
+  document.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>{const c=b.dataset.cat;state.filterCat=c===state.filterCat||c===''?null:c;state.selectedDate=null;state.showAddForm=false;render()}));
+  document.querySelectorAll('td[data-date]').forEach(td=>td.addEventListener('click',(e)=>{if(e.target.closest('.ev-pill')||e.target.closest('.ev-bar')||e.target.closest('.week-ev-pill'))return;const ds=td.dataset.date;state.selectedDate=state.selectedDate===ds?null:ds;state.showAddForm=false;state.addMsg='';render()}));
+  // 추가 버튼
+  document.getElementById('btn-add')?.addEventListener('click',()=>{state.showAddForm=true;state.addMsg='';render();});
+  // 추가 제출
+  document.getElementById('btn-add-submit')?.addEventListener('click',()=>{
+    const title=document.getElementById('add-title').value.trim();
+    const cat=document.getElementById('add-cat').value;
+    const endDate=document.getElementById('add-end').value;
+    if(!title){state.addMsg='❌ 제목을 입력하세요';render();return;}
+    createEvent(title,state.selectedDate,cat,endDate||null);
+  });
+  // 취소
+  document.getElementById('btn-add-cancel')?.addEventListener('click',()=>{state.showAddForm=false;state.addMsg='';render();});
+}
 
 render();
 if(state.configured)fetchRange();
