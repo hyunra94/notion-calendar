@@ -44,18 +44,22 @@
   .month-table{width:100%;border-collapse:collapse;table-layout:fixed}
   .month-table th{padding:4px 0;text-align:center;font-size:9px;font-weight:700;font-family:'DotGothic16',monospace;color:var(--text-dim);border-bottom:2px solid #F8BBD0;background:#FFF5F7}
   .month-table th.sun{color:#E53935}.month-table th.sat{color:#1976D2}
-  .month-table td{padding:1px;vertical-align:top;border-right:1px solid var(--grid-line);border-bottom:1px solid var(--grid-line);height:48px;cursor:pointer;overflow:hidden}
+  .month-table td{padding:0;vertical-align:top;border-right:1px solid var(--grid-line);border-bottom:1px solid var(--grid-line);height:48px;cursor:pointer;overflow:hidden}
   .month-table td:last-child{border-right:none}
   .month-table td:hover{background:var(--hover)}
   .month-table td.other{opacity:.2}
   .month-table td.today-cell{background:#FCE4EC}
 
-  .date-num{font-size:10px;font-weight:700;color:var(--text);margin-bottom:1px;text-align:center;font-family:'DotGothic16',monospace}
+  /* 날짜 숫자 터치 영역 확대 */
+  .date-tap{display:block;padding:3px 1px 2px;text-align:center;min-height:16px}
+  .date-num{font-size:10px;font-weight:700;color:var(--text);font-family:'DotGothic16',monospace;display:inline-block}
   .date-num.today{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#F06292;color:#fff;font-weight:800;border:2px solid #C2185B;box-shadow:1px 1px 0 #E91E63;animation:blink 1.5s step-end infinite}
   .date-num.sun{color:#E53935}.date-num.sat{color:#1976D2}
+  .ev-area{padding:0 1px 1px}
 
   .ev-pill{padding:1px 2px;margin-bottom:1px;font-size:8px;font-weight:600;border-left:2px solid;cursor:pointer;display:block;text-decoration:none;line-height:1.3;word-break:break-all;white-space:normal;font-family:'Gowun Dodum',sans-serif}
-  .ev-more{font-size:7px;color:var(--text-dim);font-weight:600;text-align:center;font-family:'DotGothic16',monospace}
+  .ev-more{font-size:7px;color:var(--text-dim);font-weight:600;text-align:center;font-family:'DotGothic16',monospace;padding:1px;cursor:pointer}
+  .ev-more:hover{color:var(--accent)}
 
   .ev-bar{padding:1px 2px;margin-bottom:1px;font-size:8px;font-weight:700;cursor:pointer;display:block;text-decoration:none;line-height:1.3;word-break:break-all;white-space:normal;font-family:'Gowun Dodum',sans-serif;min-height:14px}
   .ev-bar.bar-start{border-left:3px solid;margin-right:-1px;padding-right:0}
@@ -70,7 +74,7 @@
   .week-table td:last-child{border-right:none}
   .week-table td:hover{background:var(--hover)}
   .week-table td.today-cell{background:#FCE4EC}
-  .week-date-header{text-align:center;padding:2px 0;margin-bottom:2px;border-bottom:1px dashed var(--grid-line)}
+  .week-date-header{text-align:center;padding:3px 0;margin-bottom:2px;border-bottom:1px dashed var(--grid-line)}
   .week-date-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;font-weight:800;font-size:11px;font-family:'DotGothic16',monospace;color:var(--text)}
   .week-date-num.today{background:#F06292;color:#fff;border:2px solid #C2185B;box-shadow:1px 1px 0 #E91E63}
   .week-events{max-height:280px;overflow-y:auto}
@@ -96,8 +100,6 @@
   .add-form label{display:block;font-size:8px;font-weight:700;color:var(--text-dim);margin-bottom:2px;font-family:'DotGothic16',monospace}
   .add-form input,.add-form select{width:100%;padding:5px 6px;border:2px solid #F8BBD0;background:var(--card);color:var(--text);font-size:10px;font-family:'Gowun Dodum',sans-serif;outline:none;margin-bottom:6px}
   .add-form input:focus,.add-form select:focus{border-color:#E91E63}
-  .add-form-row{display:flex;gap:4px}
-  .add-form-row>*{flex:1}
   .add-form-btns{display:flex;gap:4px;margin-top:2px}
   .add-submit{flex:1;padding:6px;border:2px solid #C2185B;background:#F06292;color:#fff;font-weight:800;font-size:10px;cursor:pointer;font-family:'DotGothic16',monospace;box-shadow:1px 1px 0 #E91E63}
   .add-submit:active{box-shadow:none;transform:translate(1px,1px)}
@@ -148,11 +150,7 @@ const CONFIG={
   WORKER_URL:'https://lingering-art-15ef-notion-proxy.abyss9405.workers.dev',
   DATABASE_ID:'1ff6b59b151a8173b350ea75f155aa8d',
   PROPS:{title:'제목',date:'날짜',category:'카테고리',duration:'소요시간',project:'프로젝트',personalMemo:'개인 메모'},
-  // 관계형 페이지 ID
-  PROJECT_IDS:{
-    '개인':'2026b59b151a8062b13fe1bdf955e54c',
-    '일정':'28f6b59b151a8033a20cddb3581de335',
-  },
+  PROJECT_IDS:{'개인':'2026b59b151a8062b13fe1bdf955e54c','일정':'28f6b59b151a8033a20cddb3581de335'},
   CATEGORIES:[{id:'업무',emoji:'💼',color:'rose'},{id:'개인',emoji:'🌸',color:'peach'}],
 };
 const COLORS={
@@ -171,9 +169,9 @@ async function fetchEvents(start,end){
   try{
     const res=await fetch(CONFIG.WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({database_id:CONFIG.DATABASE_ID,filter:{and:[{property:CONFIG.PROPS.date,date:{on_or_after:start}},{property:CONFIG.PROPS.date,date:{on_or_before:end}}]},sorts:[{property:CONFIG.PROPS.date,direction:'ascending'}],page_size:100})});
-    if(!res.ok){const err=await res.text();throw new Error(`API ${res.status}: ${err.slice(0,100)}`);}
+    if(!res.ok){const t=await res.text();throw new Error(`API ${res.status}`);}
     const data=await res.json();
-    if(data.object==='error')throw new Error(data.message||'Notion API 오류');
+    if(data.object==='error')throw new Error(data.message||'Notion 오류');
     state.events=(data.results||[]).map(p=>{
       const pr=p.properties,dateObj=pr[CONFIG.PROPS.date]?.date;
       const startVal=dateObj?.start||'',endVal=dateObj?.end||'';
@@ -189,69 +187,40 @@ async function createEvent(title,date,type,endDate,people){
   state.addMsg='추가 중... 🌸';render();
   try{
     const props={};
-    // 제목
     props[CONFIG.PROPS.title]={title:[{text:{content:title}}]};
-    // 날짜
-    const dateVal=endDate?{start:date,end:endDate}:{start:date};
-    props[CONFIG.PROPS.date]={date:dateVal};
-
+    props[CONFIG.PROPS.date]={date:endDate?{start:date,end:endDate}:{start:date}};
     if(type==='개인'){
-      // 카테고리 → 개인
       props[CONFIG.PROPS.category]={select:{name:'개인'}};
-      // 프로젝트(관계형) → 개인 페이지
       props[CONFIG.PROPS.project]={relation:[{id:CONFIG.PROJECT_IDS['개인']}]};
-      // 개인 메모(다중선택) → 인물 이름들
       if(people&&people.trim()){
         const names=people.split(',').map(n=>n.trim()).filter(n=>n);
-        props[CONFIG.PROPS.personalMemo]={multi_select:names.map(n=>({name:n}))};
+        if(names.length)props[CONFIG.PROPS.personalMemo]={multi_select:names.map(n=>({name:n}))};
       }
-    } else {
-      // 업무: 카테고리 → 일정
+    }else{
       props[CONFIG.PROPS.category]={select:{name:'일정'}};
-      // 프로젝트(관계형) → 일정 페이지
       props[CONFIG.PROPS.project]={relation:[{id:CONFIG.PROJECT_IDS['일정']}]};
     }
-
     const res=await fetch(CONFIG.WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({action:'create',database_id:CONFIG.DATABASE_ID,properties:props})});
-
     const result=await res.json();
-    if(!res.ok||result.object==='error')throw new Error(result.message||`추가 실패 (${res.status})`);
-
-    state.addMsg='✅ 추가 완료!';state.showAddForm=false;
-    render();
+    if(!res.ok||result.object==='error')throw new Error(result.message||'추가 실패');
+    state.addMsg='✅ 추가 완료!';state.showAddForm=false;render();
     setTimeout(()=>{state.addMsg='';fetchRange();},1200);
   }catch(e){state.addMsg='❌ '+e.message;render();}
 }
 
 function fmt(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function todayStr(){return fmt(new Date())}
-function getMonthDays(y,m){
-  const dim=new Date(y,m+1,0).getDate(),prev=new Date(y,m,0).getDate();
-  let fd=new Date(y,m,1).getDay();fd=fd===0?6:fd-1;
-  const days=[];
-  for(let i=fd-1;i>=0;i--)days.push({date:new Date(y,m-1,prev-i),cur:false});
-  for(let i=1;i<=dim;i++)days.push({date:new Date(y,m,i),cur:true});
-  while(days.length<42){const n=days.length-fd-dim+1;days.push({date:new Date(y,m+1,n),cur:false})}
-  return days;
-}
+function getMonthDays(y,m){const dim=new Date(y,m+1,0).getDate(),prev=new Date(y,m,0).getDate();let fd=new Date(y,m,1).getDay();fd=fd===0?6:fd-1;const days=[];for(let i=fd-1;i>=0;i--)days.push({date:new Date(y,m-1,prev-i),cur:false});for(let i=1;i<=dim;i++)days.push({date:new Date(y,m,i),cur:true});while(days.length<42){const n=days.length-fd-dim+1;days.push({date:new Date(y,m+1,n),cur:false})}return days}
 function getWeekDays(d){const s=new Date(d);let day=s.getDay();s.setDate(s.getDate()+(day===0?-6:1-day));return Array.from({length:7},(_,i)=>{const w=new Date(s);w.setDate(s.getDate()+i);return w})}
 function getDowMon(d){const dow=d.getDay();return dow===0?6:dow-1;}
 function eventsOn(ds){
   let evs=state.events.filter(e=>e.isMultiDay?(ds>=e.date&&ds<=e.endDate):e.date===ds);
-  if(state.filterCat){
-    if(state.filterCat==='업무')evs=evs.filter(e=>e.category!=='개인');
-    else if(state.filterCat==='개인')evs=evs.filter(e=>e.category==='개인'||e.category==='공휴일');
-  }
+  if(state.filterCat){if(state.filterCat==='업무')evs=evs.filter(e=>e.category!=='개인');else if(state.filterCat==='개인')evs=evs.filter(e=>e.category==='개인'||e.category==='공휴일');}
   return evs;
 }
 function catInfo(n){return CONFIG.CATEGORIES.find(c=>c.id===n)||{emoji:'📌',color:'steel'}}
-function catColor(n){
-  const c=CONFIG.CATEGORIES.find(cat=>cat.id===n);
-  if(c)return COLORS[c.color]||COLORS.steel;
-  if(n==='공휴일')return COLORS['coral'];
-  return COLORS['rose'];
-}
+function catColor(n){const c=CONFIG.CATEGORIES.find(cat=>cat.id===n);if(c)return COLORS[c.color]||COLORS.steel;if(n==='공휴일')return COLORS['coral'];return COLORS['rose'];}
 function fetchRange(){const d=state.currentDate;if(state.view==='month'){const y=d.getFullYear(),m=d.getMonth();fetchEvents(fmt(new Date(y,m-1,20)),fmt(new Date(y,m+1,10)))}else{const wk=getWeekDays(d);fetchEvents(fmt(wk[0]),fmt(wk[6]))}}
 
 function render(){
@@ -314,14 +283,17 @@ function renderMonth(){
     const idx=r*7+c,day=days[idx],ds=fmt(day.date),isToday=ds===td,dow=getDowMon(day.date);
     const isSun=dow===6,isSat=dow===5,evs=eventsOn(ds);
     h+=`<td class="${day.cur?'':'other'} ${isToday?'today-cell':''}" data-date="${ds}">`;
-    if(isToday)h+=`<div style="text-align:center"><span class="date-num today">${day.date.getDate()}</span></div>`;
-    else h+=`<div class="date-num ${isSun?'sun':''} ${isSat?'sat':''}">${day.date.getDate()}</div>`;
+    // 날짜 터치 영역 확대
+    h+=`<div class="date-tap">`;
+    if(isToday)h+=`<span class="date-num today">${day.date.getDate()}</span>`;
+    else h+=`<span class="date-num ${isSun?'sun':''} ${isSat?'sat':''}">${day.date.getDate()}</span>`;
+    h+=`</div><div class="ev-area">`;
     const me=evs.filter(e=>e.isMultiDay),se=evs.filter(e=>!e.isMultiDay);
     let shown=0;const mx=3;
     for(const ev of me){if(shown>=mx)break;h+=renderEvBar(ev,ds,dow);shown++;}
     for(const ev of se){if(shown>=mx)break;const col=catColor(ev.category);h+=`<a class="ev-pill" href="${ev.url}" target="_blank" style="background:${col.light};border-left-color:${col.bg};color:${col.text}" title="${ev.title}">${ev.title}</a>`;shown++;}
-    if(me.length+se.length>mx)h+=`<div class="ev-more">+${me.length+se.length-mx}</div>`;
-    h+=`</td>`;}h+=`</tr>`;}
+    if(me.length+se.length>mx)h+=`<div class="ev-more" data-date="${ds}">+${me.length+se.length-mx}</div>`;
+    h+=`</div></td>`;}h+=`</tr>`;}
   return h+`</tbody></table></div>`}
 
 function renderWeek(){
@@ -354,23 +326,11 @@ function renderAddForm(){
   if(!state.showAddForm||!state.selectedDate)return'';
   return`<div class="add-form">
     <div class="add-form-title">🌸 ${state.selectedDate} 일정 추가</div>
-    <label>제목</label>
-    <input type="text" id="add-title" placeholder="일정 이름">
-    <label>유형</label>
-    <select id="add-type">
-      <option value="개인">🌸 개인</option>
-      <option value="업무">💼 업무</option>
-    </select>
-    <div id="people-row">
-      <label>만나는 사람 (쉼표로 구분)</label>
-      <input type="text" id="add-people" placeholder="예: 홍길동, 김철수">
-    </div>
-    <label>종료일 (선택)</label>
-    <input type="date" id="add-end" value="">
-    <div class="add-form-btns">
-      <button class="add-submit" id="btn-add-submit">🌸 추가!</button>
-      <button class="add-cancel" id="btn-add-cancel">취소</button>
-    </div>
+    <label>제목</label><input type="text" id="add-title" placeholder="일정 이름">
+    <label>유형</label><select id="add-type"><option value="개인">🌸 개인</option><option value="업무">💼 업무</option></select>
+    <div id="people-row"><label>만나는 사람 (쉼표로 구분)</label><input type="text" id="add-people" placeholder="예: 홍길동, 김철수"></div>
+    <label>종료일 (선택)</label><input type="date" id="add-end">
+    <div class="add-form-btns"><button class="add-submit" id="btn-add-submit">🌸 추가!</button><button class="add-cancel" id="btn-add-cancel">취소</button></div>
     ${state.addMsg?`<div class="add-msg" style="color:${state.addMsg.startsWith('❌')?'#C62828':'var(--accent)'}">${state.addMsg}</div>`:''}
   </div>`}
 
@@ -378,16 +338,29 @@ function bindEvents(){
   document.querySelectorAll('.view-btn').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;state.selectedDate=null;state.showAddForm=false;state.addMsg='';render();fetchRange()}));
   document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.nav;if(v==='today')state.currentDate=new Date();else{const dir=parseInt(v),d=new Date(state.currentDate);if(state.view==='month')d.setMonth(d.getMonth()+dir);else d.setDate(d.getDate()+dir*7);state.currentDate=d}state.selectedDate=null;state.showAddForm=false;state.addMsg='';render();fetchRange()}));
   document.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>{const c=b.dataset.cat;state.filterCat=c===state.filterCat||c===''?null:c;state.selectedDate=null;state.showAddForm=false;render()}));
-  document.querySelectorAll('td[data-date]').forEach(td=>td.addEventListener('click',(e)=>{if(e.target.closest('.ev-pill')||e.target.closest('.ev-bar')||e.target.closest('.week-ev-pill'))return;const ds=td.dataset.date;state.selectedDate=state.selectedDate===ds?null:ds;state.showAddForm=false;state.addMsg='';render()}));
 
-  document.getElementById('btn-add')?.addEventListener('click',()=>{state.showAddForm=true;state.addMsg='';render();});
-
-  // 유형 변경 시 만나는 사람 필드 표시/숨김
-  document.getElementById('add-type')?.addEventListener('change',(e)=>{
-    const row=document.getElementById('people-row');
-    if(row)row.style.display=e.target.value==='개인'?'block':'none';
+  // 날짜 클릭 - date-tap 또는 ev-more 클릭 시 상세 열기
+  document.querySelectorAll('.date-tap, .ev-more').forEach(el=>{
+    el.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const td=el.closest('td[data-date]');
+      if(!td)return;
+      const ds=td.dataset.date;
+      state.selectedDate=state.selectedDate===ds?null:ds;
+      state.showAddForm=false;state.addMsg='';render();
+    });
   });
 
+  // td 전체 클릭 (빈 공간)
+  document.querySelectorAll('td[data-date]').forEach(td=>td.addEventListener('click',(e)=>{
+    if(e.target.closest('.ev-pill')||e.target.closest('.ev-bar')||e.target.closest('.week-ev-pill')||e.target.closest('.date-tap')||e.target.closest('.ev-more'))return;
+    const ds=td.dataset.date;
+    state.selectedDate=state.selectedDate===ds?null:ds;
+    state.showAddForm=false;state.addMsg='';render();
+  }));
+
+  document.getElementById('btn-add')?.addEventListener('click',()=>{state.showAddForm=true;state.addMsg='';render();});
+  document.getElementById('add-type')?.addEventListener('change',(e)=>{const row=document.getElementById('people-row');if(row)row.style.display=e.target.value==='개인'?'block':'none';});
   document.getElementById('btn-add-submit')?.addEventListener('click',()=>{
     const title=document.getElementById('add-title')?.value.trim();
     const type=document.getElementById('add-type')?.value;
@@ -396,7 +369,6 @@ function bindEvents(){
     if(!title){state.addMsg='❌ 제목을 입력하세요';render();return;}
     createEvent(title,state.selectedDate,type,endDate||null,people);
   });
-
   document.getElementById('btn-add-cancel')?.addEventListener('click',()=>{state.showAddForm=false;state.addMsg='';render();});
 }
 
