@@ -202,7 +202,7 @@ async function createEvent(title,date,type,endDate,people){
     }
     const createUrl=CONFIG.WORKER_URL.replace(/\/$/,'')+'/create';
     const res=await fetch(createUrl,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({database_id:CONFIG.DATABASE_ID,properties:props})});
+      body:JSON.stringify({database_id:CONFIG.DATABASE_ID,properties:props}),redirect:'follow'});
     const result=await res.json();
     if(!res.ok||result.object==='error')throw new Error(result.message||'추가 실패');
     state.addMsg='✅ 추가 완료!';state.showAddForm=false;render();
