@@ -151,7 +151,7 @@ const CONFIG={
   DATABASE_ID:'1ff6b59b151a8173b350ea75f155aa8d',
   PROPS:{title:'제목',date:'날짜',category:'카테고리',duration:'소요시간',project:'프로젝트',personalMemo:'개인 메모'},
   PROJECT_IDS:{'개인':'2026b59b151a8062b13fe1bdf955e54c','일정':'28f6b59b151a8033a20cddb3581de335'},
-  CATEGORIES:[{id:'업무',emoji:'💼',color:'rose'},{id:'개인',emoji:'🌸',color:'peach'}],
+  CATEGORIES:[{id:'업무',emoji:'💼',color:'rose'},{id:'약속',emoji:'🌸',color:'peach'},{id:'개인',emoji:'✏️',color:'steel'}],
 };
 const COLORS={
   rose:{bg:'#F06292',light:'#FCE4EC',text:'#C2185B'},
@@ -189,13 +189,16 @@ async function createEvent(title,date,type,endDate,people){
     const props={};
     props[CONFIG.PROPS.title]={title:[{text:{content:title}}]};
     props[CONFIG.PROPS.date]={date:endDate?{start:date,end:endDate}:{start:date}};
-    if(type==='개인'){
+    if(type==='약속'){
       props[CONFIG.PROPS.category]={select:{name:'개인'}};
       props[CONFIG.PROPS.project]={relation:[{id:CONFIG.PROJECT_IDS['개인']}]};
       if(people&&people.trim()){
         const names=people.split(',').map(n=>n.trim()).filter(n=>n);
         if(names.length)props[CONFIG.PROPS.personalMemo]={multi_select:names.map(n=>({name:n}))};
       }
+    }else if(type==='개인'){
+      props[CONFIG.PROPS.category]={select:{name:'할일'}};
+      props[CONFIG.PROPS.project]={relation:[{id:CONFIG.PROJECT_IDS['개인']}]};
     }else{
       props[CONFIG.PROPS.category]={select:{name:'일정'}};
       props[CONFIG.PROPS.project]={relation:[{id:CONFIG.PROJECT_IDS['일정']}]};
@@ -216,7 +219,9 @@ function getWeekDays(d){const s=new Date(d);let day=s.getDay();s.setDate(s.getDa
 function getDowMon(d){const dow=d.getDay();return dow===0?6:dow-1;}
 function eventsOn(ds){
   let evs=state.events.filter(e=>e.isMultiDay?(ds>=e.date&&ds<=e.endDate):e.date===ds);
-  if(state.filterCat){if(state.filterCat==='업무')evs=evs.filter(e=>e.category!=='개인');else if(state.filterCat==='개인')evs=evs.filter(e=>e.category==='개인'||e.category==='공휴일');}
+  if(state.filterCat==='업무')evs=evs.filter(e=>e.category!=='개인'&&e.category!=='할일');
+    else if(state.filterCat==='약속')evs=evs.filter(e=>e.category==='개인'||e.category==='공휴일');
+    else if(state.filterCat==='개인')evs=evs.filter(e=>e.category==='할일'||e.category==='공휴일');}
   return evs;
 }
 function catInfo(n){return CONFIG.CATEGORIES.find(c=>c.id===n)||{emoji:'📌',color:'steel'}}
@@ -327,7 +332,7 @@ function renderAddForm(){
   return`<div class="add-form">
     <div class="add-form-title">🌸 ${state.selectedDate} 일정 추가</div>
     <label>제목</label><input type="text" id="add-title" placeholder="일정 이름">
-    <label>유형</label><select id="add-type"><option value="개인">🌸 개인</option><option value="업무">💼 업무</option></select>
+    <label>유형</label><select id="add-type"><option value="약속">🌸 약속</option><option value="개인">✏️ 개인</option><option value="업무">💼 업무</option></select>
     <div id="people-row"><label>만나는 사람 (쉼표로 구분)</label><input type="text" id="add-people" placeholder="예: 사람 이름"></div>
     <label>종료일 (선택)</label><input type="date" id="add-end">
     <div class="add-form-btns"><button class="add-submit" id="btn-add-submit">🌸 추가!</button><button class="add-cancel" id="btn-add-cancel">취소</button></div>
@@ -360,7 +365,7 @@ function bindEvents(){
   }));
 
   document.getElementById('btn-add')?.addEventListener('click',()=>{state.showAddForm=true;state.addMsg='';render();});
-  document.getElementById('add-type')?.addEventListener('change',(e)=>{const row=document.getElementById('people-row');if(row)row.style.display=e.target.value==='개인'?'block':'none';});
+  document.getElementById('add-type')?.addEventListener('change',(e)=>{const row=document.getElementById('people-row');if(row)row.style.display=e.target.value==='약속'?'block':'none';});
   document.getElementById('btn-add-submit')?.addEventListener('click',()=>{
     const title=document.getElementById('add-title')?.value.trim();
     const type=document.getElementById('add-type')?.value;
