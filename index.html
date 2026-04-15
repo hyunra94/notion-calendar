@@ -272,11 +272,12 @@ function renderHeader(){
   if(state.view==='month')title=`${d.getFullYear()}년 ${MONTHS[d.getMonth()]}`;
   else{const wk=getWeekDays(d),s=wk[0],e=wk[6];title=s.getMonth()===e.getMonth()?`${MONTHS[s.getMonth()]} ${s.getDate()}–${e.getDate()}일`:`${MONTHS[s.getMonth()]} ${s.getDate()}–${MONTHS[e.getMonth()]} ${e.getDate()}일`}
   const cm=state.events.filter(e=>{const ed=new Date(e.date);return ed.getMonth()===d.getMonth()&&ed.getFullYear()===d.getFullYear()}).length;
-  return`<div class="header"><div class="header-left"><div class="logo">🌸</div><div><div class="header-title">${title}</div><div class="header-sub">${cm}개 / ${state.events.length}개</div></div></div><div class="header-right"><div class="view-toggle"><button class="view-btn ${state.view==='month'?'active':''}" data-view="month">월</button><button class="view-btn ${state.view==='week'?'active':''}" data-view="week">주</button></div><button class="nav-btn" data-nav="-1">◀</button><button class="today-btn" data-nav="today">TODAY</button><button class="nav-btn" data-nav="1">▶</button><button class="filter-btn ${state.showCancelled?'active-all':''}" id="btn-cancelled" style="margin-left:2px;font-size:7px;padding:2px 4px">${state.showCancelled?'🔓':'🔒'}</button></div></div>`}
+  return`<div class="header"><div class="header-left"><div class="logo">🌸</div><div><div class="header-title">${title}</div><div class="header-sub">${cm}개 / ${state.events.length}개</div></div></div><div class="header-right"><div class="view-toggle"><button class="view-btn ${state.view==='month'?'active':''}" data-view="month">월</button><button class="view-btn ${state.view==='week'?'active':''}" data-view="week">주</button></div><button class="nav-btn" data-nav="-1">◀</button><button class="today-btn" data-nav="today">TODAY</button><button class="nav-btn" data-nav="1">▶</button></div></div>`}
  
 function renderFilters(){
   let h=`<div class="filters"><button class="filter-btn ${!state.filterCat?'active-all':''}" data-cat="">ALL</button>`;
   for(const cat of CONFIG.CATEGORIES){const c=COLORS[cat.color],a=state.filterCat===cat.id;h+=`<button class="filter-btn" data-cat="${cat.id}" style="${a?`border-color:${c.bg};background:${c.light};color:${c.text}`:''}">${cat.emoji}${cat.id}</button>`}
+  h+=`<div style="margin-left:auto"><button class="filter-btn ${state.showCancelled?'active-all':''}" id="btn-cancelled">${state.showCancelled?'🔓':'🔒'}취소</button></div>`;
   return h+`</div>`}
  
 function renderCalendar(){
