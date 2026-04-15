@@ -160,7 +160,7 @@ const COLORS={
   rose:{bg:'#F06292',light:'#FCE4EC',text:'#C2185B'},
   peach:{bg:'#FFAB91',light:'#FBE9E7',text:'#D84315'},
   coral:{bg:'#EF5350',light:'#FFEBEE',text:'#C62828'},
-  steel:{bg:'#90A4AE',light:'#ECEFF1',text:'#455A64'},
+  steel:{bg:'#CE93D8',light:'#F3E5F5',text:'#7B1FA2'},
 };
 const DAYS=['월','화','수','목','금','토','일'];
 const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
@@ -272,12 +272,11 @@ function renderHeader(){
   if(state.view==='month')title=`${d.getFullYear()}년 ${MONTHS[d.getMonth()]}`;
   else{const wk=getWeekDays(d),s=wk[0],e=wk[6];title=s.getMonth()===e.getMonth()?`${MONTHS[s.getMonth()]} ${s.getDate()}–${e.getDate()}일`:`${MONTHS[s.getMonth()]} ${s.getDate()}–${MONTHS[e.getMonth()]} ${e.getDate()}일`}
   const cm=state.events.filter(e=>{const ed=new Date(e.date);return ed.getMonth()===d.getMonth()&&ed.getFullYear()===d.getFullYear()}).length;
-  return`<div class="header"><div class="header-left"><div class="logo">🌸</div><div><div class="header-title">${title}</div><div class="header-sub">${cm}개 / ${state.events.length}개</div></div></div><div class="header-right"><div class="view-toggle"><button class="view-btn ${state.view==='month'?'active':''}" data-view="month">월</button><button class="view-btn ${state.view==='week'?'active':''}" data-view="week">주</button></div><button class="nav-btn" data-nav="-1">◀</button><button class="today-btn" data-nav="today">TODAY</button><button class="nav-btn" data-nav="1">▶</button></div></div>`}
+  return`<div class="header"><div class="header-left"><div class="logo">🌸</div><div><div class="header-title">${title}</div><div class="header-sub">${cm}개 / ${state.events.length}개</div></div></div><div class="header-right"><div class="view-toggle"><button class="view-btn ${state.view==='month'?'active':''}" data-view="month">월</button><button class="view-btn ${state.view==='week'?'active':''}" data-view="week">주</button></div><button class="nav-btn" data-nav="-1">◀</button><button class="today-btn" data-nav="today">TODAY</button><button class="nav-btn" data-nav="1">▶</button><button class="filter-btn ${state.showCancelled?'active-all':''}" id="btn-cancelled" style="margin-left:2px;font-size:7px;padding:2px 4px">${state.showCancelled?'🔓':'🔒'}</button></div></div>`}
  
 function renderFilters(){
   let h=`<div class="filters"><button class="filter-btn ${!state.filterCat?'active-all':''}" data-cat="">ALL</button>`;
   for(const cat of CONFIG.CATEGORIES){const c=COLORS[cat.color],a=state.filterCat===cat.id;h+=`<button class="filter-btn" data-cat="${cat.id}" style="${a?`border-color:${c.bg};background:${c.light};color:${c.text}`:''}">${cat.emoji}${cat.id}</button>`}
-  h+=`<button class="filter-btn ${state.showCancelled?'active-all':''}" id="btn-cancelled">${state.showCancelled?'🔓':'🔒'}취소</button>`;
   return h+`</div>`}
  
 function renderCalendar(){
