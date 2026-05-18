@@ -143,6 +143,28 @@
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.7}}
   @keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
   @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── PWA 앱으로 실행할 때만 가운데 정렬 ───────────────────── */
+@media (display-mode: standalone) {
+  html,
+  body {
+    width: 100%;
+    min-height: 100dvh;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 12px;
+    background: var(--bg);
+  }
+
+  .app {
+    width: min(100%, 430px);
+    margin: 0 auto;
+  }
+}
 </style>
 </head>
 <body>
