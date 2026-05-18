@@ -1,0 +1,192 @@
+// 담담 - Cloudflare Worker
+// Secrets: NOTION_TOKEN, NOTION_DB_ID, SECRET_KEY / R2 바인딩: R2
+
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Secret-Key',
+};
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status, headers: { ...CORS, 'Content-Type': 'application/json' }
+  });
+}
+
+async function notionFetch(path, method, body, token) {
+  const res = await fetch(`https://api.notion.com/v1${path}`, {
+    method,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Notion-Version': '2022-06-28'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  return res.json();
+}
+
+export default {
+  async fetch(request, env) {
+    if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
+    const url = new URL(request.url);
+    const path = url.pathname;
+    if (path.startsWith('/r2/')) return serveImage(path.slice(4), env);
+    const key = request.headers.get('X-Secret-Key');
+    if (key !== env.SECRET_KEY) return json({ error: 'Unauthorized' }, 401);
+    try {
+      if (path === '/save-link'   && request.method === 'POST') return saveLinkHandler(request, env);
+      if (path === '/save-images' && request.method === 'POST') return saveImagesHandler(request, env);
+      if (path === '/list'        && request.method === 'GET')  return listHandler(url, env);
+      if (path === '/folders'     && request.method === 'GET')  return foldersHandler(env);
+      if (path === '/delete'      && request.method === 'POST') return deleteHandler(request, env);
+      return json({ error: 'Not Found' }, 404);
+    } catch (e) {
+      return json({ error: e.message }, 500);
+    }
+  }
+};
+
+// ─── 폴더 배열 → multi_select 변환 ─────────────────────────────────────────
+function toMultiSelect(folders) {
+  if (!folders) return [];
+  const arr = Array.isArray(folders) ? folders : [folders];
+  return arr.filter(Boolean).map(n => ({ name: n }));
+}
+
+// ─── 링크 저장 ───────────────────────────────────────────────────────────────
+async function saveLinkHandler(request, env) {
+  const { title, url, folders, folder, memo } = await request.json();
+  const folderList = folders || (folder ? [folder] : []);
+
+  let finalTitle = title || url;
+  let ogImage = '';
+
+  try {
+    const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    const html = await r.text();
+    const m1 = html.match(/<meta[^>]+property="og:title"[^>]+content="([^"]+)"/i)
+             || html.match(/<title[^>]*>([^<]+)<\/title>/i);
+    const m2 = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i);
+    if (m1?.[1]) finalTitle = m1[1].trim();
+    if (m2?.[1]) ogImage = m2[1].trim();
+  } catch (_) {}
+
+  const props = {
+    title:      { title: [{ text: { content: finalTitle } }] },
+    type:       { select: { name: 'link' } },
+    url:        { url },
+    created_at: { date: { start: new Date().toISOString() } }
+  };
+  if (folderList.length) props.folder = { multi_select: toMultiSelect(folderList) };
+  if (memo)     props.memo      = { rich_text: [{ text: { content: memo } }] };
+  if (ogImage)  props.image_key = { rich_text: [{ text: { content: ogImage } }] };
+
+  const data = await notionFetch('/pages', 'POST', {
+    parent: { database_id: env.NOTION_DB_ID },
+    properties: props
+  }, env.NOTION_TOKEN);
+
+  return json({ success: true, id: data.id });
+}
+
+// ─── 이미지 저장 ──────────────────────────────────────────────────────────────
+async function saveImagesHandler(request, env) {
+  const formData = await request.formData();
+  const files   = formData.getAll('images');
+  const folders = formData.getAll('folders[]');
+  const folder  = formData.get('folder') || '';
+  const memo    = formData.get('memo')   || '';
+  const folderList = folders.length ? folders : (folder ? [folder] : []);
+
+  const results = [];
+  for (const file of files) {
+    if (!(file instanceof File)) continue;
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const key = `damdam/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+
+    await env.R2.put(key, await file.arrayBuffer(), {
+      httpMetadata: { contentType: file.type || 'image/jpeg' }
+    });
+
+    const props = {
+      title:      { title: [{ text: { content: file.name || '이미지' } }] },
+      type:       { select: { name: 'image' } },
+      image_key:  { rich_text: [{ text: { content: key } }] },
+      created_at: { date: { start: new Date().toISOString() } }
+    };
+    if (folderList.length) props.folder = { multi_select: toMultiSelect(folderList) };
+    if (memo) props.memo = { rich_text: [{ text: { content: memo } }] };
+
+    const data = await notionFetch('/pages', 'POST', {
+      parent: { database_id: env.NOTION_DB_ID },
+      properties: props
+    }, env.NOTION_TOKEN);
+
+    results.push({ id: data.id, key });
+  }
+
+  return json({ success: true, count: results.length, results });
+}
+
+// ─── 목록 조회 ────────────────────────────────────────────────────────────────
+async function listHandler(url, env) {
+  const folder = url.searchParams.get('folder') || 'all';
+
+  const body = {
+    sorts: [{ property: 'created_at', direction: 'descending' }],
+    page_size: 100
+  };
+  if (folder !== 'all') {
+    body.filter = { property: 'folder', multi_select: { contains: folder } };
+  }
+
+  const data = await notionFetch(
+    `/databases/${env.NOTION_DB_ID}/query`,
+    'POST', body, env.NOTION_TOKEN
+  );
+
+  const items = (data.results || []).map(page => {
+    const p = page.properties;
+    return {
+      id:         page.id,
+      title:      p.title?.title?.[0]?.text?.content || '',
+      type:       p.type?.select?.name || 'link',
+      url:        p.url?.url || '',
+      image_key:  p.image_key?.rich_text?.[0]?.text?.content || '',
+      folders:    (p.folder?.multi_select || []).map(o => o.name),
+      memo:       p.memo?.rich_text?.[0]?.text?.content || '',
+      created_at: p.created_at?.date?.start || ''
+    };
+  });
+
+  return json({ items });
+}
+
+// ─── 폴더 목록 ────────────────────────────────────────────────────────────────
+async function foldersHandler(env) {
+  const data = await notionFetch(`/databases/${env.NOTION_DB_ID}`, 'GET', null, env.NOTION_TOKEN);
+  const options = data.properties?.folder?.multi_select?.options || [];
+  return json({ folders: options.map(o => o.name) });
+}
+
+// ─── R2 이미지 서빙 ───────────────────────────────────────────────────────────
+async function serveImage(key, env) {
+  const obj = await env.R2.get(decodeURIComponent(key));
+  if (!obj) return new Response('Not Found', { status: 404 });
+  return new Response(obj.body, {
+    headers: {
+      'Content-Type': obj.httpMetadata?.contentType || 'image/jpeg',
+      'Cache-Control': 'public, max-age=86400',
+      ...CORS
+    }
+  });
+}
+
+// ─── 삭제 ────────────────────────────────────────────────────────────────────
+async function deleteHandler(request, env) {
+  const { id, image_key } = await request.json();
+  if (image_key && !image_key.startsWith('http')) await env.R2.delete(image_key);
+  await notionFetch(`/pages/${id}`, 'PATCH', { archived: true }, env.NOTION_TOKEN);
+  return json({ success: true });
+}
