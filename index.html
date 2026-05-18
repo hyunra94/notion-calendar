@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Notion Calendar</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#E91E63">
+<link rel="icon" type="image/png" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
@@ -394,6 +397,18 @@ function bindEvents(){
  
 render();
 if(state.configured)fetchRange();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js')
+      .then(function (reg) {
+        console.log('Service Worker registered:', reg.scope);
+      })
+      .catch(function (err) {
+        console.error('Service Worker registration failed:', err);
+      });
+  });
+}
 </script>
 </body>
 </html>
